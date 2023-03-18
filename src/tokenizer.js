@@ -4,49 +4,15 @@
  * @returns ast
  */
 function tokenizer(input) {
+  input = String(input)
+
   let current = 0
   let tokens = []
 
   while (current < input.length) {
-    const char = input[current]
-
-    // 检查 变量名
-    // a-z A-Z _ $
-    const Variable = /[a-zA-Z]/
-    if (Variable.test(char)) {
-
-      // 查看是否是关键词
-      if() {
-
-      }
-
-    }
-
-    // 检查数字
-    if() {
-
-    }
-
-    // 检查符号
-    if() {
-
-    }
-
-    // 检查括号
-    if() {
-
-    }
-
-    // 检查 花括号
-    if(){
-
-    }
-
-    // 检查 数组
-    if() {
-
-    }
-
+    let char = input[current]
+    char = char.charCodeAt()
+      
 
     // 什么都没有检索到
     throw TypeError(`没有检索到${tokens[current]}`)
@@ -58,7 +24,7 @@ function tokenizer(input) {
 
 module.exports = tokenizer
 
-// javascript 语法
+// 保留字 or 关键字
 const keywordTypes = {
   debugger: { keyword: "debugger" },
 
@@ -161,41 +127,81 @@ const keywordTypes = {
 // 各种标点符号
 const Punctuation = {
   bracket: {
-    bracketL: { type: "[" },
-    bracketR: { type: "]" },
+    bracketL: { 
+      type: "[",
+      charCode: 91
+    },
+    bracketR: { 
+      type: "]",
+      charCode: 93
+    },
     type: "ArrayExpression"
   },
 
   brack: {
-    brackL: { type: "{" },
-    brackR: { type: "}" },
+    brackL: { 
+      type: "{",
+      charCode: 123 
+    },
+    brackR: { 
+      type: "}",
+      charCode: 125 
+    },
     type: "BlockStatement"
   },
 
   paren: {
-    parenL: { type: "(" },
-    parenR: { type: ")" },
+    parenL: { 
+      type: "(",
+      charCode: 40 
+    },
+    parenR: { 
+      type: ")",
+      charCode: 41 
+    },
     type: "ParenStatement"
   },
 
-  comma: { type: "," },
+  comma: { 
+    type: ",",
+    charCode: 44 
+  },
 
-  colon: { type: ":" },
+  colon: { 
+    type: ":",
+    charCode: 58 
+  },
 
-  semi: { type: ";" },
+  semi: { 
+    type: ";",
+    charCode: 59 
+  },
 
-  dot: { type: "." },
+  dot: { 
+    type: ".",
+    charCode: 46 
+  },
 
-  question: { type: "?" },
+  question: { 
+    type: "?",
+    charCode: 63 
+  },
 
   /**
    * 正则的处理
    * var a = /src/
    * 当处理 / / 这样的符号是要和 注释 // 分开区分 
    */
-  slash: { type: "/" },
+  slash: { 
+    type: "/",
+    charCode: 47 
+  },
 
-  comment: { type: "//" },
+  // "//" 相当于 "\"
+  comment: { 
+    type: "//",
+    charCode: 92 
+  },
 
   /**
    * 数学符号的处理 
@@ -205,4 +211,28 @@ const Punctuation = {
    * 除法：/ 
    * 求模：% 
    */
+  addition: {
+    type: "+",
+    charCode: 43
+  },
+
+  subtraction: {
+    type: "-",
+    charCode: 45
+  },
+
+  multiplication: {
+    type: "*",
+    charCode: 42
+  },
+
+  division: {
+    type: "/",
+    charCode: 47
+  },
+
+  percent: {
+    type: "%",
+    charCode: 37
+  }
 }
