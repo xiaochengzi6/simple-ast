@@ -319,6 +319,19 @@ export function IsNumber(char) {
   return char > 47 && char < 58
 }
 
+export function IsString(char) {
+  if (
+    char === 39 /* ' */ ||
+    char === 34 /* " */||
+    char === 96 /* ` */
+  ){
+    return true 
+  }
+  return false 
+}
+
+
+// 获得 Unicode 字符
 export function getChatCode(char) {
   return String(char).charCodeAt(0)
 }
