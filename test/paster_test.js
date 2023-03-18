@@ -1,4 +1,3 @@
-const paster = require('../src/paster')
-
+import paster from "../src/paster.js"
 
 console.log(paster)

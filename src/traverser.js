@@ -9,4 +9,4 @@ function traverser(ast, visitor){
 }
 
 
-module.exports = traverser
+export default traverser

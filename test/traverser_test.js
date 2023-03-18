@@ -1,4 +1,3 @@
-const traverser = require('../src/traverser')
-
+import traverser from "../src/traverser"
 
 console.log(traverser)
