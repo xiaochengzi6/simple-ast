@@ -8,15 +8,48 @@ function tokenizer(input) {
   let tokens = []
 
   while (current < input.length) {
-    // 检查函数
-    if () {
+    const char = input[current]
+
+    // 检查 变量名
+    // a-z A-Z _ $
+    const Variable = /[a-zA-Z]/
+    if (Variable.test(char)) {
+
+      // 查看是否是关键词
+      if() {
+
+      }
 
     }
 
-    // 检查变量
-    if () {
+    // 检查数字
+    if() {
 
     }
+
+    // 检查符号
+    if() {
+
+    }
+
+    // 检查括号
+    if() {
+
+    }
+
+    // 检查 花括号
+    if(){
+
+    }
+
+    // 检查 数组
+    if() {
+
+    }
+
+
+    // 什么都没有检索到
+    throw TypeError(`没有检索到${tokens[current]}`)
   }
 
   return tokens
