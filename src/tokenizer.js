@@ -12,15 +12,92 @@ function tokenizer(input) {
   while (current < input.length) {
     let char = input[current]
     char = char.charCodeAt()
-      
-
+    readToken(char)
+    // current++
     // 什么都没有检索到
-    throw TypeError(`没有检索到${tokens[current]}`)
+    // throw TypeError(`没有检索到${tokens[current]}`)
+  }
+  function readToken(char) {
+    // 字母
+    if (IsVariableLetter(char)) {
+      readLetter(char)
+    }
+
+    // 数字
+    else if (IsNumber(char)) {
+      readNumber()
+    }
+
+    // 符号
+    else if (IsSymbol(char)) {
+      readSymbol()
+    }
   }
 
+  function readLetter() {
+    let value = ''
+    let target = getChatCode(input[current])
+    while (IsVariableLetter(target) && current < input.length) {
+      value += input[current]
+      current++
+      target = getChatCode(input[current])
+    }
+    
+    current++
+    tokens.push({
+      type: 'name',
+      value: value
+    })
+  }
+
+  function readNumber() {
+    let value = ''
+    let target = getChatCode(input[current])
+    while (IsNumber(target)) {
+      value += input[current]
+      current++
+      target = getChatCode(input[current])
+    }
+
+    return tokens.push({
+      type: 'number',
+      value: value
+    })
+  }
+
+  function readSymbol() {
+  
+    current++
+  }
   return tokens
 }
 
+
+
+function IsVariableLetter(char) {
+  if (char < 65) {
+    return char === 36
+  }
+  else if (char < 91) return true
+  else if (char < 97) {
+    return char === 95
+  }
+  else if (char < 123) return true
+
+  return false
+}
+
+function IsSymbol(char) {
+  return SymbolCharCode.includes(char)
+}
+
+function IsNumber(char) {
+  return char > 47 && char < 58
+}
+
+function getChatCode(char){
+  return String(char).charCodeAt(0)
+}
 
 module.exports = tokenizer
 
@@ -30,24 +107,24 @@ const keywordTypes = {
 
   do: { keyword: "do" },
 
-  class: { 
+  class: {
     keyword: "class",
-    type: "ClassDeclaration" 
+    type: "ClassDeclaration"
   },
 
-  function: { 
+  function: {
     keyword: "function",
-    type: "FunctionDeclaration" 
+    type: "FunctionDeclaration"
   },
 
-  return: { 
+  return: {
     keyword: "return",
-    type: "ReturnStatement", 
+    type: "ReturnStatement",
   },
 
-  if: { 
+  if: {
     keyword: "if",
-    type: "IfStatement" 
+    type: "IfStatement"
   },
 
   else: { keyword: "else" },
@@ -64,22 +141,22 @@ const keywordTypes = {
 
   default: { keyword: "default" },
 
-  throw: { 
+  throw: {
     keyword: "throw",
-    type: "ThrowStatement" 
+    type: "ThrowStatement"
   },
 
   try: { keyword: "try" },
 
   finally: { keyword: "finally" },
 
-  let: { 
+  let: {
     keyword: "let",
     type: "VariableDeclaration",
     kind: "let"
-   },
+  },
 
-  var: { 
+  var: {
     keyword: "var",
     type: "VariableDeclaration",
     kind: "var"
@@ -87,10 +164,10 @@ const keywordTypes = {
 
   catch: { keyword: "catch" },
 
-  const: { 
+  const: {
     keyword: "const",
     type: "VariableDeclaration",
-    kind: "const" 
+    kind: "const"
   },
 
   while: { keyword: "while" },
@@ -124,14 +201,18 @@ const keywordTypes = {
   delete: { keyword: "delete", }
 };
 
+const SymbolCharCode = [
+  91, 93, 123, 125, 40, 41, 44, 58, 59, 46, 63, 47, 92, 43, 45, 42, 47, 37, 32
+]
+
 // 各种标点符号
 const Punctuation = {
   bracket: {
-    bracketL: { 
+    bracketL: {
       type: "[",
       charCode: 91
     },
-    bracketR: { 
+    bracketR: {
       type: "]",
       charCode: 93
     },
@@ -139,52 +220,52 @@ const Punctuation = {
   },
 
   brack: {
-    brackL: { 
+    brackL: {
       type: "{",
-      charCode: 123 
+      charCode: 123
     },
-    brackR: { 
+    brackR: {
       type: "}",
-      charCode: 125 
+      charCode: 125
     },
     type: "BlockStatement"
   },
 
   paren: {
-    parenL: { 
+    parenL: {
       type: "(",
-      charCode: 40 
+      charCode: 40
     },
-    parenR: { 
+    parenR: {
       type: ")",
-      charCode: 41 
+      charCode: 41
     },
     type: "ParenStatement"
   },
 
-  comma: { 
+  comma: {
     type: ",",
-    charCode: 44 
+    charCode: 44
   },
 
-  colon: { 
+  colon: {
     type: ":",
-    charCode: 58 
+    charCode: 58
   },
 
-  semi: { 
+  semi: {
     type: ";",
-    charCode: 59 
+    charCode: 59
   },
 
-  dot: { 
+  dot: {
     type: ".",
-    charCode: 46 
+    charCode: 46
   },
 
-  question: { 
+  question: {
     type: "?",
-    charCode: 63 
+    charCode: 63
   },
 
   /**
@@ -192,15 +273,15 @@ const Punctuation = {
    * var a = /src/
    * 当处理 / / 这样的符号是要和 注释 // 分开区分 
    */
-  slash: { 
+  slash: {
     type: "/",
-    charCode: 47 
+    charCode: 47
   },
 
   // "//" 相当于 "\"
-  comment: { 
+  comment: {
     type: "//",
-    charCode: 92 
+    charCode: 92
   },
 
   /**
@@ -236,3 +317,8 @@ const Punctuation = {
     charCode: 37
   }
 }
+
+const value = 'var 123 fnction hellow'
+const token = tokenizer(value)
+
+console.log(token)

@@ -1,7 +1,7 @@
 ### git 命令
-git pull 拉取
+git pull origin main 拉取
 
-git push 提交
+git push origin main 提交
 
 git add . 保存文件
 

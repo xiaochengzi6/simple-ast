@@ -1,3 +1,42 @@
+
+//===========================================================================
+//==                                判断                                   ==
+//===========================================================================
+/**
+ * 字母
+ * @param {*} char 
+ * @returns 
+ */
+function IsVariableLetter(char) {
+  if (char < 65) {
+    return char === 36
+  }
+  else if (char < 91) return true
+  else if (char < 97) {
+    return char === 95
+  }
+  else if (char < 123) return true
+
+  return false
+}
+
+
+function IsSymbol(char) {
+  return SymbolCharCode.includes(char)
+}
+
+function IsNumber(char) {
+  return char > 47 && char < 58
+}
+
+function getChatCode(char) {
+  return String(char).charCodeAt(0)
+}
+
+
+//===========================================================================
+//==                                常量                                   ==
+//===========================================================================
 const LetterCode = {
   // a -z code: 97 -> 122
   a: 97,
