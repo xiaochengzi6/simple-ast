@@ -143,15 +143,3 @@ function tokenizer(input) {
 
 
 export default tokenizer
-
-
-
-const value = 'var name = 89'
-const token = tokenizer(value)
-
-console.log(token)
-
-console.log(`
-var b = 1
-var c = d
-`)

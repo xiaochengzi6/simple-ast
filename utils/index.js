@@ -330,7 +330,7 @@ let tokenizerTypeName = {
 
 // 得到所有的 token 中的 type
 export const tokenTypeName = Object.assign({}, tokenizerTypeName, combineTokenTypeObj(KeywordType, PunctuationType))
-console.log(tokenTypeName)
+
 //===========================================================================
 //==                                判断                                   ==
 //===========================================================================
