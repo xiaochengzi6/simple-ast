@@ -9,28 +9,28 @@ function traverser(ast, visitor) {
       traverserNode(child, parent)
     })
   }
-  function braverserNode(node, parent) {
+  function traverserNode(node, parent) {
     let methods = visitor[node.type]
     if (methods && methods.enter) {
       methods.enter(node, parent)
     }
-  } switch (node.type) {
-    case 'program':
-      traverserArray(node.body, node)
-      break
-    case 'CallExpression':
-      traverserArray(node.params, node)
-      break
-    case 'NumberStatement':
-    case 'StringStatement':
-      break
-    default:
-      throw new TypeError(node.type);
-  }
-  if (methods && methods.exit) {
-    methods.exit(node, parent)
-  }
-  braverserNode(ast, null)
+    switch (node.type) {
+      case 'program':
+        traverserArray(node.body, node)
+        break
+      case 'CallExpression':
+        traverserArray(node.params, node)
+        break
+      case 'NumberLiteral':
+        break
+      default:
+        break
+    }
+    if (methods && methods.exit) {
+      methods.exit(node, parent)
+    }
+  } 
+  traverserNode(ast, null)
 }
 
 

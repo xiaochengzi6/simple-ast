@@ -77,34 +77,40 @@ const PunctuationType = {
   "91": {
     value: "[",
     type: "ArrayExpressionLeft",
-    charCode: 91
+    charCode: 91,
+    recursion: true
   },
   "93": {
     value: "]",
     type: "ArrayExpressionRight",
-    charCode: 93
+    charCode: 93,
+    recursion: true
   },
 
   "123": {
     value: "{",
     type: "BlockStatementLeft",
-    charCode: 123
+    charCode: 123,
+    recursion: true,
   },
   "125": {
     value: "}",
     type: "BlockStatementRight",
-    charCode: 125
+    charCode: 125,
+    recursion: true,
   },
 
   "40": {
     value: "(",
     type: "ParentStatementLeft",
-    charCode: 40
+    charCode: 40,
+    recursion: true,
   },
   "41": {
     value: ")",
     type: "ParentStatementRight",
-    charCode: 41
+    charCode: 41,
+    recursion: true,
   },
 
   "44": {
@@ -324,8 +330,7 @@ let tokenizerTypeName = {
 
 // 得到所有的 token 中的 type
 export const tokenTypeName = Object.assign({}, tokenizerTypeName, combineTokenTypeObj(KeywordType, PunctuationType))
-
-
+console.log(tokenTypeName)
 //===========================================================================
 //==                                判断                                   ==
 //===========================================================================
@@ -397,22 +402,54 @@ function combineTokenTypeObj(...arg) {
     const tokensName = Object.values(arg[i])
 
     tokensName.forEach((obj) => {
-      const { type } = obj
+      const { type, recursion } = obj
       if (type != null) {
+
+        // 是否是考虑递归
+        if (recursion != null) {
+          return result.push({
+            type,
+            recursion
+          })
+        }
+
         return result.push(type)
       }
     })
   }
 
   // 数组去重
-  result = Array.from(new Set(result))
+  result = removal(result)
 
   // 组装
   result.forEach(ele => {
-    resultObj[ele] = {
-      type: ele
+    if (typeof ele === 'object') {
+      resultObj[ele.type] = ele 
+    }
+    else {
+      resultObj[ele] = {
+        type: ele
+      }
     }
   })
 
   return resultObj
-} 
+}
+
+// 数组去重
+function removal(arr) {
+  const map = new Map()
+  const result = []
+
+  arr.forEach(ele => {
+    let target = typeof ele === 'object' ? ele.type : ele
+
+    if (!map.has(target)) {
+      result.push(ele)
+      map.set(target, true)
+    }
+  })
+
+  return result
+}
+
