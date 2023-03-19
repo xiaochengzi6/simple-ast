@@ -1,3 +1,12 @@
-import paster from "../src/paster.js"
+import parser from "../src/parser.js"
+import tokenizer from "../src/tokenizer.js"
 
-console.log(paster)
+
+
+const target = `function add(x, y){ return x + y}`
+
+const tokens = tokenizer(target)
+
+const result = parser(tokens)
+
+console.log(result)
