@@ -100,7 +100,62 @@ function tokenizer(input) {
 
     // 处理反斜杠
     if (char === 92) {
-      // \n \u \x \0
+      // \n \0 \t \v \f \r \" \' \\ 
+      const target = input[++current]
+      let result
+
+      switch (target) {
+        case 'n':
+          return result = {
+            type: 'LineFeedStatement',
+            value: '\n'
+          }
+        case '0':
+          return result = {
+            type: 'NullStatement',
+            value: 'null'
+          }
+        case 't':
+          return result = {
+            type: 'TabulationStatement',
+            // 制表符号默认 4 空格
+            value: '    '
+          }
+        case 'v':
+          // 垂直制表符号
+          return result = {
+            type: 'VerticalStatement',
+            // 垂直制表符默认为 换行
+            value: '\n'
+          }
+        case 'f':
+          // 换页符号
+          return result = {
+            type: 'PageBreakStatement',
+            // 换页符号默认没有
+            value: ''
+          }
+        case 'r':
+          return result = {
+            type: "CarriageStatement",
+            // 默认回车符号为换行
+            type: "\n"
+          }
+        case '"':
+          return result = {
+            type: "DoubleQuotationStatement",
+            value: '"'
+          }
+        case "'":
+          return result = {
+            type: "SingleQuotationStatement",
+            value: "'"
+          }
+      }
+
+      if (result != null) {
+        return result
+      }
     }
 
     const { value, type, charCode } = getPunctuation(char)
@@ -122,6 +177,11 @@ function tokenizer(input) {
     // ' "  前两个 以什么开始就以什么结束， ( ` ) 模板字符串
     while (target !== currentValue) {
       value += input[current++]
+
+      // 处理反斜杠
+      if (char === 92) {
+        // \u \x
+      }
 
       target = input[current]
     }
