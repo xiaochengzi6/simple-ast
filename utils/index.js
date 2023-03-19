@@ -148,7 +148,7 @@ const PunctuationType = {
     charCode: 47
   },
 
-  // "//" 相当于 "\"
+  // "//" 相当于 "\" 反斜杠
   "92": {
     value: "//",
     type: "CommentStatement",
@@ -310,6 +310,22 @@ export const KeywordType = {
   delete: { keyword: "delete", }
 }
 
+let tokenizerTypeName = {
+  "CustomNameStatement": {
+    type: "CustomNameStatement"
+  },
+  "NumberStatement": {
+    type: "NumberStatement"
+  },
+  "StringStatement": {
+    type: "StringStatement"
+  }
+}
+
+// 得到所有的 token 中的 type
+export const tokenTypeName = Object.assign({}, tokenizerTypeName, combineTokenTypeObj(KeywordType, PunctuationType))
+
+
 //===========================================================================
 //==                                判断                                   ==
 //===========================================================================
@@ -370,3 +386,33 @@ export function getPunctuation(charCode) {
     throw TypeError(`有其他符号没有被处理${charCode}`)
   }
 }
+
+//===========================================================================
+//==                                utils                                  ==
+//===========================================================================
+function combineTokenTypeObj(...arg) {
+  let result = [], resultObj = {}
+
+  for (let i = 0; i < arg.length; i++) {
+    const tokensName = Object.values(arg[i])
+
+    tokensName.forEach((obj) => {
+      const { type } = obj
+      if (type != null) {
+        return result.push(type)
+      }
+    })
+  }
+
+  // 数组去重
+  result = Array.from(new Set(result))
+
+  // 组装
+  result.forEach(ele => {
+    resultObj[ele] = {
+      type: ele
+    }
+  })
+
+  return resultObj
+} 

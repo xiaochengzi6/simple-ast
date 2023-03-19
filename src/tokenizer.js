@@ -69,7 +69,7 @@ function tokenizer(input) {
 
     // 默认的
     return tokens.push({
-      type: 'name',
+      type: 'CustomNameStatement',
       value
     })
   }
@@ -90,14 +90,21 @@ function tokenizer(input) {
   }
 
   function readSymbol(char) {
-    const { value, type, charCode } = getPunctuation(char)
 
-    current++
-    
     // 处理空格
-    if(charCode === 32){
-      return 
+    if (char === 32) {
+      // 默认不处理
+      current++
+      return
     }
+
+    // 处理反斜杠
+    if (char === 92) {
+      // \n \u \x \0
+    }
+
+    const { value, type, charCode } = getPunctuation(char)
+    current++
 
     return tokens.push({
       type,
@@ -143,3 +150,8 @@ const value = 'var name = 89'
 const token = tokenizer(value)
 
 console.log(token)
+
+console.log(`
+var b = 1
+var c = d
+`)
