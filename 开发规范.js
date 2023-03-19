@@ -10,5 +10,16 @@ const tokenizerType = {
   number: {
     type: 'NumberStatement'
   },
+
+  // 定义的变量名
+  customName: {
+    type: "CustomNameStatement"
+  }, 
+
+  // 字符串
+  string:{
+    type: "StringStatement"
+  },
+
   
 } 
