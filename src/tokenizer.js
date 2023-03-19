@@ -1,5 +1,5 @@
-import {IsNumber, IsSymbol, IsVariableLetter, getChatCode, KeywordType} from '../utils/index.js'
-import { IsString } from './../utils/index';
+import { IsNumber, IsSymbol, IsVariableLetter, getChatCode, KeywordType, getPunctuation } from '../utils/index.js'
+import { IsString } from './../utils/index.js';
 
 /**
  * 有限自动机
@@ -26,45 +26,39 @@ function tokenizer(input) {
 
     // 数字
     else if (IsNumber(char)) {
-      readNumber()
+      readNumber(char)
     }
 
     // 符号
     else if (IsSymbol(char)) {
-      readSymbol()
+      readSymbol(char)
     }
 
     // 字符串 ( ', " ) || 模板字符串 ( ` )
-    else if(IsString(char)){
+    else if (IsString(char)) {
       readString()
     }
-    
-    // 括号
-    else if(1){
 
-    }
 
-    // 花括号
-    else if(2){
-
+    else {
+      throw TypeError(`出现不能解释的语法${char}`)
     }
   }
 
-  function readLetter() {
+  function readLetter(char) {
     let value = ''
-    let target = getChatCode(input[current])
 
     // 必须设置 current < input.length
-    while (IsVariableLetter(target) && current < input.length) {
-      value += input[current]
-      current++
-      target = getChatCode(input[current])
+    while (IsVariableLetter(char) && current < input.length) {
+      value += input[current++]
+
+      char = getChatCode(input[current])
     }
-    
+
     // 关键词处理
     // 问题：不能处理 else if 
     const keywordNode = KeywordType[value]
-    if(keywordNode != null && value === keywordNode.keyword){
+    if (keywordNode != null && value === keywordNode.keyword) {
 
       return tokens.push({
         type: keywordNode.type,
@@ -73,7 +67,6 @@ function tokenizer(input) {
       })
     }
 
-
     // 默认的
     return tokens.push({
       type: 'name',
@@ -81,14 +74,13 @@ function tokenizer(input) {
     })
   }
 
-  function readNumber() {
+  function readNumber(char) {
     let value = ''
-    let target = getChatCode(input[current])
 
-    while (IsNumber(target)) {
-      value += input[current]
-      current++
-      target = getChatCode(input[current])
+    while (IsNumber(char)) {
+      value += input[current++]
+
+      char = getChatCode(input[current])
     }
 
     return tokens.push({
@@ -97,26 +89,40 @@ function tokenizer(input) {
     })
   }
 
-  function readSymbol() {
-  
+  function readSymbol(char) {
+    const { value, type, charCode } = getPunctuation(char)
+
     current++
+    
+    // 处理空格
+    if(charCode === 32){
+      return 
+    }
+
+    return tokens.push({
+      type,
+      value
+    })
   }
 
-  function readString(){
+  function readString() {
     let value = ''
-    let currentValue = input[current]
-    let target = getChatCode(currentValue)
+    const currentValue = input[current++]
+    value += currentValue
+
+    let target = input[current]
 
     // ' "  前两个 以什么开始就以什么结束， ( ` ) 模板字符串
-    while(IsString(target)){
-      value += input[current]
-      current
-      target = getChatCode(input[current])
+    while (target !== currentValue) {
+      value += input[current++]
 
-      if(target === currentValue){
-        value += input[++current]
-        break
-      }
+      target = input[current]
+    }
+
+    if (input[current] === currentValue) {
+      value += input[current]
+
+      current++
     }
 
     return tokens.push({
@@ -133,7 +139,7 @@ export default tokenizer
 
 
 
-const value = 'var 123 function hellow'
+const value = 'var name = 89'
 const token = tokenizer(value)
 
 console.log(token)

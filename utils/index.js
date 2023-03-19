@@ -72,65 +72,68 @@ export const numberCode = {
 }
 
 // 各种标点符号
-export const PunctuationType = {
-  bracket: {
-    bracketL: {
-      type: "[",
-      charCode: 91
-    },
-    bracketR: {
-      type: "]",
-      charCode: 93
-    },
-    type: "ArrayExpression"
+const PunctuationType = {
+
+  "91": {
+    value: "[",
+    type: "ArrayExpressionLeft",
+    charCode: 91
+  },
+  "93": {
+    value: "]",
+    type: "ArrayExpressionRight",
+    charCode: 93
   },
 
-  brack: {
-    brackL: {
-      type: "{",
-      charCode: 123
-    },
-    brackR: {
-      type: "}",
-      charCode: 125
-    },
-    type: "BlockStatement"
+  "123": {
+    value: "{",
+    type: "BlockStatementLeft",
+    charCode: 123
+  },
+  "125": {
+    value: "}",
+    type: "BlockStatementRight",
+    charCode: 125
   },
 
-  paren: {
-    parenL: {
-      type: "(",
-      charCode: 40
-    },
-    parenR: {
-      type: ")",
-      charCode: 41
-    },
-    type: "ParenStatement"
+  "40": {
+    value: "(",
+    type: "ParentStatementLeft",
+    charCode: 40
+  },
+  "41": {
+    value: ")",
+    type: "ParentStatementRight",
+    charCode: 41
   },
 
-  comma: {
-    type: ",",
+  "44": {
+    value: ",",
+    type: "CommaStatement",
     charCode: 44
   },
 
-  colon: {
-    type: ":",
+  "58": {
+    value: ":",
+    type: "ColonStatement",
     charCode: 58
   },
 
-  semi: {
-    type: ";",
+  "59": {
+    value: ";",
+    type: "SemiStatement",
     charCode: 59
   },
 
-  dot: {
-    type: ".",
+  "46": {
+    value: ".",
+    type: "DotStatement",
     charCode: 46
   },
 
-  question: {
-    type: "?",
+  "63": {
+    value: "?",
+    type: "QuestionStatement",
     charCode: 63
   },
 
@@ -139,14 +142,16 @@ export const PunctuationType = {
    * var a = /src/
    * 当处理 / / 这样的符号是要和 注释 // 分开区分 
    */
-  slash: {
-    type: "/",
+  "47": {
+    value: "/",
+    type: "SlashStatement",
     charCode: 47
   },
 
   // "//" 相当于 "\"
-  comment: {
-    type: "//",
+  "92": {
+    value: "//",
+    type: "CommentStatement",
     charCode: 92
   },
 
@@ -158,36 +163,52 @@ export const PunctuationType = {
    * 除法：/ 
    * 求模：% 
    */
-  addition: {
-    type: "+",
+  "43": {
+    value: "+",
+    type: "AdditionStatement",
     charCode: 43
   },
 
-  subtraction: {
-    type: "-",
+  "45": {
+    value: "-",
+    type: "SubtractionStatement",
     charCode: 45
   },
 
-  multiplication: {
-    type: "*",
+  "42": {
+    value: "*",
+    type: "MultiplicationStatement",
     charCode: 42
   },
 
-  division: {
-    type: "/",
+  "47": {
+    value: "/",
+    type: "DividionStatement",
     charCode: 47
   },
 
-  percent: {
-    type: "%",
+  "37": {
+    value: "%",
+    type: "PercentStatement",
     charCode: 37
-  }
+  },
+
+  // 空格
+  "32": {
+    value: " ",
+    type: "SpaceStatement",
+    charCode: 32
+  },
+
+  "61": {
+    value: "=",
+    type: "EqualSignSymbol",
+    charCode: 61
+  },
 }
 
 // 符号 charCode
-export const SymbolCharCode = [
-  91, 93, 123, 125, 40, 41, 44, 58, 59, 46, 63, 47, 92, 43, 45, 42, 47, 37, 32
-]
+export const SymbolCharCode = Object.keys(PunctuationType).map(ele => (Number(ele)))
 
 // 保留字 or 关键字
 export const KeywordType = {
@@ -322,16 +343,30 @@ export function IsNumber(char) {
 export function IsString(char) {
   if (
     char === 39 /* ' */ ||
-    char === 34 /* " */||
+    char === 34 /* " */ ||
     char === 96 /* ` */
-  ){
-    return true 
+  ) {
+    return true
   }
-  return false 
+  return false
 }
 
+//===========================================================================
+//==                                查询                                   ==
+//===========================================================================
 
 // 获得 Unicode 字符
 export function getChatCode(char) {
   return String(char).charCodeAt(0)
+}
+
+// 查询符号类型
+export function getPunctuation(charCode) {
+  const target = PunctuationType[charCode]
+
+  if (target != null) {
+    return target
+  } else {
+    throw TypeError(`有其他符号没有被处理${charCode}`)
+  }
 }
