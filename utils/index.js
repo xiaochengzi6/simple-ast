@@ -331,6 +331,59 @@ let tokenizerTypeName = {
 // 得到所有的 token 中的 type
 export const tokenTypeName = Object.assign({}, tokenizerTypeName, combineTokenTypeObj(KeywordType, PunctuationType))
 
+// 转义字符 \n \t \0
+export const EscapeCharacterType = {
+  '\n': {
+    type: "LineFeedStatement",
+    value: '\n'
+  },
+
+  '\0': {
+    type: "NullStatement",
+    value: '\0'
+  },
+
+  '\t': result = {
+    type: 'TabulationStatement',
+    // 制表符号默认 4 空格
+    value: '    '
+  },
+
+  '\v': {
+    type: 'VerticalStatement',
+    // 垂直制表符默认为 换行
+    value: '\n'
+  },
+
+  '\f': {
+    type: 'PageBreakStatement',
+    // 换页符号默认没有
+    value: ''
+  },
+
+  '\r': {
+    type: "CarriageStatement",
+    // 默认回车符号为换行
+    type: "\n"
+  },
+
+  '\"': {
+    type: "DoubleQuotationStatement",
+    value: '"'
+  },
+
+  "\'": {
+    type: "SingleQuotationStatement",
+    value: "'"
+  },
+
+  "Default_Symbole_Value": {
+    type: "Default_Symbol_value",
+  }
+}
+
+export const EscapeCharacter = Object.keys(EscapeCharacterType)
+
 //===========================================================================
 //==                                判断                                   ==
 //===========================================================================
@@ -372,6 +425,12 @@ export function IsString(char) {
   return false
 }
 
+export function IsEscapeCharacter(char) {
+  if (EscapeCharacter.includes(char)) {
+    return true
+  }
+  return false
+}
 //===========================================================================
 //==                                查询                                   ==
 //===========================================================================
@@ -424,7 +483,7 @@ function combineTokenTypeObj(...arg) {
   // 组装
   result.forEach(ele => {
     if (typeof ele === 'object') {
-      resultObj[ele.type] = ele 
+      resultObj[ele.type] = ele
     }
     else {
       resultObj[ele] = {

@@ -9,11 +9,18 @@ function parser(tokens) {
 
   function walk() {
     let token = tokens[current]
-    if(token == null) return 
+    
+    if(token == null) {
+      throw TypeError(`解析 token 出现问题 current: ${current}`)
+    } 
     
     const { type, value } = token
     const targetObj = tokenTypeName[type]
-    
+
+    if(targetObj){
+      throw TypeError(`取不到 tokenTypeName 中的 type 当前type:${type}`)
+    }
+
     const { type: targetObjType, recursion } = targetObj
 
     // 递归处理 括号 花括号
@@ -97,7 +104,7 @@ function parser(tokens) {
   while (current < tokens.length) {
     ast.body.push(walk())
   }
-  
+
   return ast
 }
 

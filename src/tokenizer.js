@@ -1,4 +1,12 @@
-import { IsNumber, IsSymbol, IsVariableLetter, getChatCode, KeywordType, getPunctuation } from '../utils/index.js'
+import {
+  IsNumber,
+  IsSymbol,
+  IsVariableLetter,
+  getChatCode,
+  KeywordType,
+  getPunctuation,
+  IsEscapeCharacter
+} from '../utils/index.js'
 import { IsString } from './../utils/index.js';
 
 /**
@@ -21,27 +29,31 @@ function tokenizer(input) {
   function readToken(char) {
     // 字母
     if (IsVariableLetter(char)) {
-      readLetter(char)
+      return readLetter(char)
     }
 
     // 数字
     else if (IsNumber(char)) {
-      readNumber(char)
+      return readNumber(char)
     }
 
     // 符号
     else if (IsSymbol(char)) {
-      readSymbol(char)
+      return readSymbol(char)
     }
 
     // 字符串 ( ', " ) || 模板字符串 ( ` )
     else if (IsString(char)) {
-      readString()
+      return readString(char)
     }
 
+    // 处理 \n \t 等字符
+    else if (IsEscapeCharacter(input[current])) {
+      return readSlash()
+    }
 
     else {
-      throw TypeError(`出现不能解释的语法${char}`)
+      throw TypeError(`出现不能解释的语法${char}'${input[current]}'`)
     }
   }
 
@@ -100,65 +112,13 @@ function tokenizer(input) {
 
     // 处理反斜杠
     if (char === 92) {
-      // \n \0 \t \v \f \r \" \' \\ 
-      const target = input[++current]
-      let result
+      consoel.log('TODO: 处理反斜杠')
 
-      switch (target) {
-        case 'n':
-          return result = {
-            type: 'LineFeedStatement',
-            value: '\n'
-          }
-        case '0':
-          return result = {
-            type: 'NullStatement',
-            value: 'null'
-          }
-        case 't':
-          return result = {
-            type: 'TabulationStatement',
-            // 制表符号默认 4 空格
-            value: '    '
-          }
-        case 'v':
-          // 垂直制表符号
-          return result = {
-            type: 'VerticalStatement',
-            // 垂直制表符默认为 换行
-            value: '\n'
-          }
-        case 'f':
-          // 换页符号
-          return result = {
-            type: 'PageBreakStatement',
-            // 换页符号默认没有
-            value: ''
-          }
-        case 'r':
-          return result = {
-            type: "CarriageStatement",
-            // 默认回车符号为换行
-            type: "\n"
-          }
-        case '"':
-          return result = {
-            type: "DoubleQuotationStatement",
-            value: '"'
-          }
-        case "'":
-          return result = {
-            type: "SingleQuotationStatement",
-            value: "'"
-          }
-      }
-
-      if (result != null) {
-        return result
-      }
+      current++
+      return
     }
 
-    const { value, type, charCode } = getPunctuation(char)
+    const { value, type } = getPunctuation(char)
     current++
 
     return tokens.push({
@@ -167,7 +127,7 @@ function tokenizer(input) {
     })
   }
 
-  function readString() {
+  function readString(char) {
     let value = ''
     const currentValue = input[current++]
     value += currentValue
@@ -181,6 +141,7 @@ function tokenizer(input) {
       // 处理反斜杠
       if (char === 92) {
         // \u \x
+        console.log('TODO: 处理字符串中的反斜杠')
       }
 
       target = input[current]
@@ -198,6 +159,79 @@ function tokenizer(input) {
     })
   }
 
+  function readSlash() {
+    const target = input[current]
+    let result
+
+    switch (target) {
+      case '\n':
+        result = {
+          type: 'LineFeedStatement',
+          value: '\n'
+        }
+        break
+      case '\0':
+        result = {
+          type: 'NullStatement',
+          value: 'null'
+        }
+        break
+      case '\t':
+        result = {
+          type: 'TabulationStatement',
+          // 制表符号默认 4 空格
+          value: '    '
+        }
+        break
+      case '\v':
+        // 垂直制表符号
+        result = {
+          type: 'VerticalStatement',
+          // 垂直制表符默认为 换行
+          value: '\n'
+        }
+        break
+      case '\f':
+        // 换页符号
+        result = {
+          type: 'PageBreakStatement',
+          // 换页符号默认没有
+          value: ''
+        }
+        break
+      case '\r':
+        result = {
+          type: "CarriageStatement",
+          // 默认回车符号为换行
+          type: "\n"
+        }
+        break
+      case '\"':
+        result = {
+          type: "DoubleQuotationStatement",
+          value: '"'
+        }
+        break
+      case "\'":
+        result = {
+          type: "SingleQuotationStatement",
+          value: "'"
+        }
+        break
+      default:
+        result = {
+          type: "Default_Symbol_value",
+          value: target,
+          chatCode: char
+        }
+        break
+    }
+
+    current++
+    return tokens.push(result) 
+  }
+
+  
   return tokens
 }
 
