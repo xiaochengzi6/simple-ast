@@ -1,4 +1,4 @@
-import {IsNumber, IsSymbol, IsVariableLetter, getChatCode, keywordTypes} from '../utils/index.js'
+import {IsNumber, IsSymbol, IsVariableLetter, getChatCode, KeywordType} from '../utils/index.js'
 import { IsString } from './../utils/index';
 
 /**
@@ -38,6 +38,7 @@ function tokenizer(input) {
     else if(IsString(char)){
       readString()
     }
+    
     // 括号
     else if(1){
 
@@ -62,20 +63,21 @@ function tokenizer(input) {
     
     // 关键词处理
     // 问题：不能处理 else if 
-    const keywordNode = keywordTypes[value]
+    const keywordNode = KeywordType[value]
     if(keywordNode != null && value === keywordNode.keyword){
+
       return tokens.push({
         type: keywordNode.type,
-        value: value,
         kind: value,
+        value
       })
     }
 
 
     // 默认的
-    tokens.push({
+    return tokens.push({
       type: 'name',
-      value: value
+      value
     })
   }
 
@@ -91,7 +93,7 @@ function tokenizer(input) {
 
     return tokens.push({
       type: 'NumberStatement',
-      value: value
+      value
     })
   }
 
@@ -102,17 +104,24 @@ function tokenizer(input) {
 
   function readString(){
     let value = ''
-    let target = getChatCode(input[current])
+    let currentValue = input[current]
+    let target = getChatCode(currentValue)
 
-    //  还需要： ' "  前两个 以什么开始就以什么结束， ( ` ) 模板字符串需要 用字符串包裹起来
+    // ' "  前两个 以什么开始就以什么结束， ( ` ) 模板字符串
     while(IsString(target)){
       value += input[current]
       current
       target = getChatCode(input[current])
+
+      if(target === currentValue){
+        value += input[++current]
+        break
+      }
     }
 
     return tokens.push({
-
+      type: 'StringStatement',
+      value
     })
   }
 

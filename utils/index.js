@@ -72,7 +72,7 @@ export const numberCode = {
 }
 
 // 各种标点符号
-export const Punctuation = {
+export const PunctuationType = {
   bracket: {
     bracketL: {
       type: "[",
@@ -190,7 +190,7 @@ export const SymbolCharCode = [
 ]
 
 // 保留字 or 关键字
-export const keywordTypes = {
+export const KeywordType = {
   debugger: { keyword: "debugger" },
 
   do: { keyword: "do" },
