@@ -1,3 +1,5 @@
+
+// manageToken 只能管理 tokens 但并不能做其他处理，显的非常鸡肋
 /**
  * 管理 tokens 
  */
@@ -27,12 +29,11 @@ class ManageToken {
   }
 
   getTokenType() {
-
+    return this.current[this.current]['type']
   }
 
   isSameTokenType(type) {
     const { type: currentObjType } = this.tokens[this.current]
     return currentObjType === type   
   }
-
 }
