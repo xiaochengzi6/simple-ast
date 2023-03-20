@@ -1,10 +1,10 @@
-
+import { visitor } from "./visitor.js"
 /**
  * ast 树的遍历
  * @param {*} ast 
  * @param {*} visitor 
  */
-function traverser(ast, visitor) {
+function traverser(ast) {
 
   function traverserArray(array, parent) {
     array.forEach(child => {

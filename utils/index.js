@@ -461,7 +461,7 @@ export const tokenTypeName = Object.assign(
   tokenizerTypeName,
   combineTokenTypeObj(KeywordType, PunctuationType, EscapeCharacterValue)
 )
-console.log(tokenTypeName)
+
 //===========================================================================
 //==                                判断                                   ==
 //===========================================================================
@@ -558,7 +558,7 @@ function combineTokenTypeObj(...arg) {
 
     tokensName.forEach((obj) => {
       if (typeof obj === 'object') {
-        const getObj = getObjectValue(obj, ['type', 'resursion', 'value'])
+        const getObj = getObjectValue(obj, ['type', 'recursion', 'value'])
 
         if (Object.keys(getObj).length > 0) {
           return result.push(getObj)
