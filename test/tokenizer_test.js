@@ -1,9 +1,6 @@
-import tokenizer from "../src/tokenizer"
+import tokenizer from "../src/tokenizer.js"
 
-const fun = `function add(x, y){
-  return x + y
-}`
-
-var token = tokenizer(fun)
+const value = 'var name = 89'
+const token = tokenizer(value)
 
 console.log(token)

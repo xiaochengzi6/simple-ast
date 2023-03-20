@@ -328,8 +328,67 @@ let tokenizerTypeName = {
   }
 }
 
+// 转义字符 \n \t \0
+export const EscapeCharacterType = {
+  '\n': {
+    type: "LineFeedStatement",
+    value: '\n'
+  },
+
+  '\0': {
+    type: "NullStatement",
+    value: 'null'
+  },
+
+  '\t': {
+    type: 'TabulationStatement',
+    // 制表符号默认 4 空格
+    value: '    '
+  },
+
+  '\v': {
+    type: 'VerticalStatement',
+    // 垂直制表符默认为 换行
+    value: '\n'
+  },
+
+  '\f': {
+    type: 'PageBreakStatement',
+    // 换页符号默认没有
+    value: ''
+  },
+
+  '\r': {
+    type: "CarriageStatement",
+    // 默认回车符号为换行
+    type: "\n"
+  },
+
+  '\"': {
+    type: "DoubleQuotationStatement",
+    value: '\"'
+  },
+
+  "\'": {
+    type: "SingleQuotationStatement",
+    value: "\'"
+  },
+
+  // 默认字符处理
+  "Default_Symbole_Value": {
+    type: "Default_Symbol_value",
+  }
+}
+
+const EscapeCharacter = Object.keys(EscapeCharacterType)
+const EscapeCharacterValue = Object.values(EscapeCharacterType)
+
 // 得到所有的 token 中的 type
-export const tokenTypeName = Object.assign({}, tokenizerTypeName, combineTokenTypeObj(KeywordType, PunctuationType))
+export const tokenTypeName = Object.assign(
+  {},
+  tokenizerTypeName,
+  combineTokenTypeObj(KeywordType, PunctuationType, EscapeCharacterValue)
+)
 console.log(tokenTypeName)
 //===========================================================================
 //==                                判断                                   ==
@@ -372,6 +431,12 @@ export function IsString(char) {
   return false
 }
 
+export function IsEscapeCharacter(char) {
+  if (EscapeCharacter.includes(char)) {
+    return true
+  }
+  return false
+}
 //===========================================================================
 //==                                查询                                   ==
 //===========================================================================
@@ -392,6 +457,24 @@ export function getPunctuation(charCode) {
   }
 }
 
+export function checkRight(state, callback) {
+  if (
+    state == null ||
+    state == '' ||
+    state == false ||
+    (typeof state === 'array' && state.length == 0) ||
+    state !== state
+  ) {
+    if (typeof callback === 'function') {
+      return callback(state)
+    } else if (typeof callback === 'string') {
+      console.log(callback)
+    } else {
+      throw TypeError(`值无法处理 ${state}`)
+    }
+  }
+}
+
 //===========================================================================
 //==                                utils                                  ==
 //===========================================================================
@@ -402,18 +485,12 @@ function combineTokenTypeObj(...arg) {
     const tokensName = Object.values(arg[i])
 
     tokensName.forEach((obj) => {
-      const { type, recursion } = obj
-      if (type != null) {
+      if (typeof obj === 'object') {
+        const getObj = getObjectValue(obj, ['type', 'resursion', 'value'])
 
-        // 是否是考虑递归
-        if (recursion != null) {
-          return result.push({
-            type,
-            recursion
-          })
+        if (Object.keys(getObj).length > 0) {
+          return result.push(getObj)
         }
-
-        return result.push(type)
       }
     })
   }
@@ -424,7 +501,7 @@ function combineTokenTypeObj(...arg) {
   // 组装
   result.forEach(ele => {
     if (typeof ele === 'object') {
-      resultObj[ele.type] = ele 
+      resultObj[ele.type] = ele
     }
     else {
       resultObj[ele] = {
@@ -453,3 +530,16 @@ function removal(arr) {
   return result
 }
 
+// 取出想要的属性 
+function getObjectValue(obj, attributes) {
+  const result = {}
+
+  Object.entries(obj).forEach(arr => {
+    const [key, value] = arr
+    if (attributes.includes(key)) {
+      result[key] = value
+    }
+  })
+
+  return result
+}

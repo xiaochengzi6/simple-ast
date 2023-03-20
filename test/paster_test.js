@@ -3,7 +3,11 @@ import tokenizer from "../src/tokenizer.js"
 
 
 
-const target = `function add(x, y) { return x + y}`
+const target = `
+var number = "string"
+
+function add(x, y) { return x + y}
+`
 
 const tokens = tokenizer(target)
 
