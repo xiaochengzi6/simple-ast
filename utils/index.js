@@ -328,9 +328,6 @@ let tokenizerTypeName = {
   }
 }
 
-// 得到所有的 token 中的 type
-export const tokenTypeName = Object.assign({}, tokenizerTypeName, combineTokenTypeObj(KeywordType, PunctuationType))
-
 // 转义字符 \n \t \0
 export const EscapeCharacterType = {
   '\n': {
@@ -340,10 +337,10 @@ export const EscapeCharacterType = {
 
   '\0': {
     type: "NullStatement",
-    value: '\0'
+    value: 'null'
   },
 
-  '\t': result = {
+  '\t': {
     type: 'TabulationStatement',
     // 制表符号默认 4 空格
     value: '    '
@@ -369,20 +366,29 @@ export const EscapeCharacterType = {
 
   '\"': {
     type: "DoubleQuotationStatement",
-    value: '"'
+    value: '\"'
   },
 
   "\'": {
     type: "SingleQuotationStatement",
-    value: "'"
+    value: "\'"
   },
 
+  // 默认字符处理
   "Default_Symbole_Value": {
     type: "Default_Symbol_value",
   }
 }
 
-export const EscapeCharacter = Object.keys(EscapeCharacterType)
+const EscapeCharacter = Object.keys(EscapeCharacterType)
+const EscapeCharacterValue = Object.values(EscapeCharacterType)
+
+// 得到所有的 token 中的 type
+export const tokenTypeName = Object.assign(
+  {},
+  tokenizerTypeName,
+  combineTokenTypeObj(KeywordType, PunctuationType, EscapeCharacterValue)
+)
 
 //===========================================================================
 //==                                判断                                   ==
@@ -448,6 +454,24 @@ export function getPunctuation(charCode) {
     return target
   } else {
     throw TypeError(`有其他符号没有被处理${charCode}`)
+  }
+}
+
+export function checkRight(state, callback) {
+  if (
+    state == null ||
+    state == '' ||
+    state == false ||
+    (typeof state === 'array' && state.length == 0) ||
+    state !== state 
+  ) {
+    if (typeof callback === 'function') {
+      return callback(state)
+    } else if (typeof callback === 'string') {
+      console.log(callback)
+    } else {
+      throw TypeError(`值无法处理 ${state}`)
+    }
   }
 }
 

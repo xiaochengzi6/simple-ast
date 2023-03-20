@@ -1,4 +1,4 @@
-import { tokenTypeName } from "../utils/index.js"
+import { checkRight, tokenTypeName } from "../utils/index.js"
 
 /**
  * 生成 ast
@@ -9,17 +9,11 @@ function parser(tokens) {
 
   function walk() {
     let token = tokens[current]
-    
-    if(token == null) {
-      throw TypeError(`解析 token 出现问题 current: ${current}`)
-    } 
+    checkRight(token, `解析 token 出现问题 current: ${current}`)
     
     const { type, value } = token
     const targetObj = tokenTypeName[type]
-
-    if(targetObj){
-      throw TypeError(`取不到 tokenTypeName 中的 type 当前type:${type}`)
-    }
+    checkRight(targetObj, `取不到 tokenTypeName 中的 type 当前type:${type}`)
 
     const { type: targetObjType, recursion } = targetObj
 
