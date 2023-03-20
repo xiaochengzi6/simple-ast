@@ -218,9 +218,15 @@ export const SymbolCharCode = Object.keys(PunctuationType).map(ele => (Number(el
 
 // 保留字 or 关键字
 export const KeywordType = {
-  debugger: { keyword: "debugger" },
+  debugger: {
+    keyword: "debugger",
+    type: "DebuggerStatement"
+  },
 
-  do: { keyword: "do" },
+  do: {
+    keyword: "do",
+    type: "DoStatement"
+  },
 
   class: {
     keyword: "class",
@@ -242,7 +248,10 @@ export const KeywordType = {
     type: "IfStatement"
   },
 
-  else: { keyword: "else" },
+  else: {
+    keyword: "else",
+    type: "ElseStatement"
+  },
 
   // 这里不知道这样设置是否正确
   elseIf: {
@@ -250,20 +259,35 @@ export const KeywordType = {
     type: "IfStatement"
   },
 
-  switch: { keyword: "switch" },
+  switch: {
+    keyword: "switch",
+    type: "SwitchStatement"
+  },
 
-  case: { keyword: "case" },
+  case: {
+    keyword: "case",
+    type: "CaseStatement"
+  },
 
-  default: { keyword: "default" },
+  default: {
+    keyword: "default",
+    type: "DefaultStatement"
+  },
 
   throw: {
     keyword: "throw",
     type: "ThrowStatement"
   },
 
-  try: { keyword: "try" },
+  try: {
+    keyword: "try",
+    type: "TryStatement"
+  },
 
-  finally: { keyword: "finally" },
+  finally: {
+    keyword: "finally",
+    type: "Finally",
+  },
 
   let: {
     keyword: "let",
@@ -277,7 +301,10 @@ export const KeywordType = {
     kind: "var"
   },
 
-  catch: { keyword: "catch" },
+  catch: {
+    keyword: "catch",
+    type: "CatchStatement"
+  },
 
   const: {
     keyword: "const",
@@ -285,35 +312,80 @@ export const KeywordType = {
     kind: "const"
   },
 
-  while: { keyword: "while" },
+  while: {
+    keyword: "while",
+    type: "WhileStatement"
+  },
 
-  continue: { keyword: "continue" },
+  continue: {
+    keyword: "continue",
+    type: "ContinueStatement"
+  },
 
-  break: { keyword: "break" },
+  break: {
+    keyword: "break",
+    type: "BreakStatement",
+  },
 
-  with: { keyword: "with" },
+  with: {
+    keyword: "with",
+    type: "WithStatement",
+  },
 
-  null: { keyword: "null" },
+  null: {
+    keyword: "null",
+    type: "NullStatement",
+  },
 
-  true: { keyword: "true" },
+  true: {
+    keyword: "true",
+    type: "TrueStatement",
+  },
 
-  false: { keyword: "false" },
+  false: {
+    keyword: "false",
+    type: "FalseStatement",
+  },
 
-  new: { keyword: "new" },
+  new: {
+    keyword: "new",
+    type: "NewStatement",
+  },
 
-  for: { keyword: "for" },
+  for: {
+    keyword: "for",
+    type: "ForStatement"
+  },
 
-  in: { keyword: "in" },
+  in: {
+    keyword: "in",
+    type: "InStatement"
+  },
 
-  instanceof: { keyword: "instanceof" },
+  instanceof: {
+    keyword: "instanceof",
+    type: "InstanceofStatement"
+  },
 
-  this: { keyword: "this" },
+  this: {
+    keyword: "this",
+    type: "ThisStatement"
+  },
 
-  typeof: { keyword: "typeof" },
+  typeof: {
+    keyword: "typeof",
+    type: "TypeofStatement"
+  },
 
-  void: { keyword: "void", },
+  void: {
+    keyword: "void",
+    type: "VoidStatement"
+  },
 
-  delete: { keyword: "delete", }
+  delete: {
+    keyword: "delete",
+    type: "DeleteStatement"
+  }
 }
 
 let tokenizerTypeName = {

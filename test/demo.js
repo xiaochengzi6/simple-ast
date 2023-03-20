@@ -17,4 +17,3 @@ function IsEscapeCharacter(char){
   }
   return false 
 }
-
