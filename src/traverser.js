@@ -1,28 +1,33 @@
+
 /**
  * ast 树的遍历
  * @param {*} ast 
  * @param {*} visitor 
  */
 function traverser(ast, visitor) {
+
   function traverserArray(array, parent) {
     array.forEach(child => {
       traverserNode(child, parent)
     })
   }
+
   function traverserNode(node, parent) {
     let methods = visitor[node.type]
+
     if (methods && methods.enter) {
       methods.enter(node, parent)
     }
+
     switch (node.type) {
-      case 'BlockStatementLeft':
-        traverserArray(node.BlockStatementLeft, node)
+      case 'BlockStatement':
+        traverserArray(node.body, parent)
         break
-      case 'ParentStatementLeft':
-        traverserArray(node.ParentStatementLeft, node)
+      case 'ParentStatement':
+        traverserArray(node.body, parent)
         break
-      case 'ArrayExpressionLeft':
-        traverserArray(node.ArrayExpressionLeft, node)
+      case 'ArrayExpression':
+        traverserArray(node.element, parent)
         break
       case 'CustomNameStatement':
       case 'NumberStatement':
@@ -30,25 +35,24 @@ function traverser(ast, visitor) {
       default:
         break
     }
+
     if (methods && methods.exit) {
       methods.exit(node, parent)
     }
   }
+
   traverserNode(ast, null)
 }
 
 
 export default traverser
-let visitor = {
-  program:{
-    enter(node,parent){
-      parent._context.push({
-        type:'program',
-        value:node.type
-      })
-    },
 
+export const visitor = {
+  program:{
+    enter(node,parent){},
+    exit(node, parent){}
   },
+  
   NumberStatement: {
     enter(node, parent) {
       parent._context.push({
@@ -56,6 +60,9 @@ let visitor = {
         value: node.value
       });
     },
+    exit(node, parent){
+
+    }
   },
   CustomNameStatement: {
     enter(node, parent) {
@@ -88,59 +95,4 @@ let visitor = {
       parent._context.push(expression);
     },
   }
-}
-function transformer(ast,visitor) {
-  let newAst = {
-    type: 'Program',
-    body: [],
-  };
-  ast._context = newAst.body;
-  traverser(ast, visitor);
-  return newAst;
-}
-
-const ast = {
-  "type": "Program",
-    "body": [
-      {
-        "type": "FunctionDeclaration",
-        "value": "function"
-      },
-      {
-        "type": "CustomNameStatement",
-        "value": "add"
-      },
-      {
-        "type": "ParentStatement",
-        "value": "x",
-        "body": [
-          {
-            "type": "CommaStatement",
-            "value": ","
-          },
-          {
-            "type": "CustomNameStatement",
-            "value": "y"
-          }
-        ]
-      },
-      {
-        "type": "BlockStatement",
-        "value": "return",
-        "body": [
-          {
-            "type": "CustomNameStatement",
-            "value": "x"
-          },
-          {
-            "type": "AdditionStatement",
-            "value": "+"
-          },
-          {
-            "type": "CustomNameStatement",
-            "value": "y"
-          }
-        ]
-      }
-    ]
 }
