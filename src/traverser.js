@@ -20,6 +20,10 @@ function traverser(ast, visitor) {
     }
 
     switch (node.type) {
+      case 'Program':
+        traverserArray(node.body,node)
+        break
+        case'':
       case 'BlockStatement':
         traverserArray(node.body, parent)
         break
@@ -46,53 +50,3 @@ function traverser(ast, visitor) {
 
 
 export default traverser
-
-export const visitor = {
-  program:{
-    enter(node,parent){},
-    exit(node, parent){}
-  },
-  
-  NumberStatement: {
-    enter(node, parent) {
-      parent._context.push({
-        type: 'NumberStatement',
-        value: node.value
-      });
-    },
-    exit(node, parent){
-
-    }
-  },
-  CustomNameStatement: {
-    enter(node, parent) {
-      parent._context.push({
-        type: 'CustomNameStatement',
-        value: node.value
-      });
-    },
-  },
-  ParentStatement: {
-    enter(node, parent) {
-      let expression = {
-        type: 'ParentStatement',
-        //targetfunction:目标函数
-        targetfunction: {
-          type: 'nameoffunction',
-          name: node.ParentStatement
-        },
-        arguments: [],
-      };
-      node._context = expression.arguments;
-      if (parent.type !== 'ParentStatement') {
-        //expression:表达式
-        expression = {
-          //ExpressionStatement:表达式语句
-          type: 'ExpressionStatement',
-          expression: expression,
-        };
-      }
-      parent._context.push(expression);
-    },
-  }
-}
