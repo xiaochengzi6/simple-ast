@@ -389,7 +389,7 @@ export const tokenTypeName = Object.assign(
   tokenizerTypeName,
   combineTokenTypeObj(KeywordType, PunctuationType, EscapeCharacterValue)
 )
-
+console.log(tokenTypeName)
 //===========================================================================
 //==                                判断                                   ==
 //===========================================================================
@@ -463,7 +463,7 @@ export function checkRight(state, callback) {
     state == '' ||
     state == false ||
     (typeof state === 'array' && state.length == 0) ||
-    state !== state 
+    state !== state
   ) {
     if (typeof callback === 'function') {
       return callback(state)
@@ -485,18 +485,12 @@ function combineTokenTypeObj(...arg) {
     const tokensName = Object.values(arg[i])
 
     tokensName.forEach((obj) => {
-      const { type, recursion } = obj
-      if (type != null) {
+      if (typeof obj === 'object') {
+        const getObj = getObjectValue(obj, ['type', 'resursion', 'value'])
 
-        // 是否是考虑递归
-        if (recursion != null) {
-          return result.push({
-            type,
-            recursion
-          })
+        if (Object.keys(getObj).length > 0) {
+          return result.push(getObj)
         }
-
-        return result.push(type)
       }
     })
   }
@@ -536,3 +530,16 @@ function removal(arr) {
   return result
 }
 
+// 取出想要的属性 
+function getObjectValue(obj, attributes) {
+  const result = {}
+
+  Object.entries(obj).forEach(arr => {
+    const [key, value] = arr
+    if (attributes.includes(key)) {
+      result[key] = value
+    }
+  })
+
+  return result
+}
