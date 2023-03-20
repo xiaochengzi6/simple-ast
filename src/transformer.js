@@ -5,7 +5,55 @@ function transformer(ast) {
     type: 'Program',
     body: [],
   }
- const visitor = {
+  const visitor = {
+    LineFeedStatement: {
+      enter(node, parent) {
+        parent._context.push({
+          type: 'LineFeedStatement',
+          value: node.value
+        })
+      }
+    },
+    VariableDeclaration:{
+      enter(node,parent){
+        parent._context.push({
+          type:'VariableDeclaration',
+          value:node.value
+        })
+      }
+    },
+    EqualSignSymbol:{
+      enter(node,parent){
+        parent._context.push({
+          type:'EqualSignSymbol',
+          value:node.value
+        })
+      }
+    },
+    StringStatement:{
+      enter(node,parent){
+        parent._context.push({
+          type:'StringStatement',
+          value:node.value
+        })
+      }
+    },
+    FunctionDeclaration:{
+      enter(node,parent){
+        parent._context.push({
+          type:'FunctionDeclaration',
+          value:node.value
+        })
+      }
+    },
+    ReturnStatement:{
+      enter(node,parent){
+        parent._context.push({
+          type:'ReturnStatement',
+          value:node.value
+        })
+      }
+    },
     ArrayExpression: {
       enter(node, parent) {
         parent._context.push({
@@ -22,7 +70,7 @@ function transformer(ast) {
         });
       },
       exit(node, parent) {
-  
+
       }
     },
     CustomNameStatement: {
@@ -39,15 +87,15 @@ function transformer(ast) {
           type: 'func',
           getfunc: {
             type: '',
-            name:node.BlockStatement
+            name: node.BlockStatement
           },
           arguments: []
         }
         node._context = func.arguments
-        if(parent.type != 'BlockStatement'){
-          func ={
-            type:'',
-            func:func
+        if (parent.type != 'BlockStatement') {
+          func = {
+            type: '',
+            func: func
           }
         }
         parent._context.push(func);
@@ -78,7 +126,7 @@ function transformer(ast) {
     }
   }
   ast._context = newAst.body
-  traverser(ast, visitor )
+  traverser(ast, visitor)
 
   return newAst;
 }
