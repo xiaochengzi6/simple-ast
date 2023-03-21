@@ -76,70 +76,70 @@ const PunctuationType = {
 
   "91": {
     value: "[",
-    type: "ArrayExpressionLeft",
+    type: "ArraySymbolLeft",
     charCode: 91,
     recursion: true
   },
   "93": {
     value: "]",
-    type: "ArrayExpressionRight",
+    type: "ArraySymbolRight",
     charCode: 93,
     recursion: true
   },
 
   "123": {
     value: "{",
-    type: "BlockStatementLeft",
+    type: "BlockSymbolLeft",
     charCode: 123,
     recursion: true,
   },
   "125": {
     value: "}",
-    type: "BlockStatementRight",
+    type: "BlockSymbolRight",
     charCode: 125,
     recursion: true,
   },
 
   "40": {
     value: "(",
-    type: "ParentStatementLeft",
+    type: "ParentSymbolLeft",
     charCode: 40,
     recursion: true,
   },
   "41": {
     value: ")",
-    type: "ParentStatementRight",
+    type: "ParentSymbolRight",
     charCode: 41,
     recursion: true,
   },
 
   "44": {
     value: ",",
-    type: "CommaStatement",
+    type: "CommaSymbol",
     charCode: 44
   },
 
   "58": {
     value: ":",
-    type: "ColonStatement",
+    type: "ColonSymbol",
     charCode: 58
   },
 
   "59": {
     value: ";",
-    type: "SemiStatement",
+    type: "SemiSymbol",
     charCode: 59
   },
 
   "46": {
     value: ".",
-    type: "DotStatement",
+    type: "DotSymbol",
     charCode: 46
   },
 
   "63": {
     value: "?",
-    type: "QuestionStatement",
+    type: "QuestionSymbol",
     charCode: 63
   },
 
@@ -150,14 +150,14 @@ const PunctuationType = {
    */
   "47": {
     value: "/",
-    type: "SlashStatement",
+    type: "SlashSymbol",
     charCode: 47
   },
 
   // "//" 相当于 "\" 反斜杠
   "92": {
     value: "//",
-    type: "CommentStatement",
+    type: "CommentSymbol",
     charCode: 92
   },
 
@@ -171,46 +171,56 @@ const PunctuationType = {
    */
   "43": {
     value: "+",
-    type: "AdditionStatement",
+    type: "AdditionSymbol",
     charCode: 43
   },
 
   "45": {
     value: "-",
-    type: "SubtractionStatement",
+    type: "SubtractionSymbol",
     charCode: 45
   },
 
   "42": {
     value: "*",
-    type: "MultiplicationStatement",
+    type: "MultiplicationSymbol",
     charCode: 42
   },
 
   "47": {
     value: "/",
-    type: "DividionStatement",
+    type: "DividionSymbol",
     charCode: 47
   },
 
   "37": {
     value: "%",
-    type: "PercentStatement",
+    type: "PercentSymbol",
     charCode: 37
   },
 
   // 空格
   "32": {
     value: " ",
-    type: "SpaceStatement",
+    type: "SpaceSymbol",
     charCode: 32
   },
 
+  // 关系运算符
+  "60": {
+    value: "<",
+    type: "LessthanSymbol"
+  },
   "61": {
     value: "=",
     type: "EqualSignSymbol",
     charCode: 61
   },
+  "62":{
+    value: ">",
+    type: "GreaterThanSymbol",
+    charCode: 62
+  }
 }
 
 // 符号 charCode

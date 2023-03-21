@@ -89,3 +89,50 @@ function parser(tokens) {
 
 
 export default parser
+
+// 初始化 token 节点
+function InitTokenNode(){
+  this.start = 0
+  this.end = 0
+  this.type = null
+}
+
+
+// 处理 tokens 
+class TokensNode {
+  constructor(tokens) {
+    this.tokens = tokens
+    this.length = tokens.length
+    this.current = 0
+  }
+
+  getToken(current = this.current) {
+    return this.tokens[current]
+  }
+
+  getLength(tokens = this.tokens) {
+    if (typeof tokens !== 'array') return 0
+    return tokens.length
+  }
+
+  next() {
+    return this.tokens[++this.current]
+  }
+
+  peek(current = this.current + 1) {
+    return this.tokens[current]
+  }
+}
+
+const tokensValue = [
+  { type: 'VariableDeclaration', kind: 'var', value: 'var' },
+  { type: 'CustomNameStatement', value: 'name' },
+  { type: 'EqualSignSymbol', value: '=' },
+  { type: 'NumberStatement', value: '89' }
+]
+
+const tokens = new TokensNode(tokensValue)
+
+function paserVar(node) {
+
+}
