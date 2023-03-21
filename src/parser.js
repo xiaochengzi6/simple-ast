@@ -17,6 +17,7 @@ function parser(tokens) {
 
     const { type: targetObjType, recursion } = targetObj
 
+    console.log(recursion)
     // 递归处理 括号 花括号
     if (recursion == true) {
       // 花括号

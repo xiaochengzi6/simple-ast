@@ -4,8 +4,6 @@ import tokenizer from "../src/tokenizer.js"
 
 
 const target = `
-var number = "string"
-
 function add(x, y) { return x + y}
 `
 
