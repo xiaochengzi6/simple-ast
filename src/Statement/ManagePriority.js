@@ -6,7 +6,9 @@ import ManageUnaryOp from "./MangeUnaryOp";
  * 优先处理 如  instance 
  */
 class MangePriority extends ManageUnaryOp{
-
+  constructor(tokens){
+    super(tokens)
+  }
 }
 
 

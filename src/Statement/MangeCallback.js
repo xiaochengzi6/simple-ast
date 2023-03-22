@@ -8,7 +8,9 @@ import ManageFunction from './ManageFunction.js'
  *  
  */
 class ManageCallback extends ManageFunction{
-
+  constructor(tokens){
+    super(tokens)
+  }
 }
 
 

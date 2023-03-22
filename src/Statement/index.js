@@ -1,6 +1,10 @@
 
+import ManageComma from './ManageComma';
 
+function Deal(tokens){
+  const statement = new ManageComma(tokens)
 
-function parserStatement(){
-
+  return statement 
 }
+
+export default Deal

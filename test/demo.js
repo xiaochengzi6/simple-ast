@@ -8,6 +8,7 @@ class d {
 
   add() {
     this.current += 1
+    this.sub()
   }
 }
 

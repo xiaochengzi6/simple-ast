@@ -1,4 +1,3 @@
-
 import ManageTernary from './ManageTernary';
 
 /**
@@ -8,7 +7,9 @@ import ManageTernary from './ManageTernary';
  *  = += -= 之类的
  */
 class ManageLogical extends ManageTernary {
-
+  constructor(tokens){
+    super(tokens)
+  }
 
 }
 
