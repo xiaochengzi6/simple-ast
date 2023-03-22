@@ -7,13 +7,14 @@ class TokensNode {
     this.length = tokens.length
     this.current = 0
   }
-
+  //如果tokens结束,返回false否者返回本次tokens的值
   getToken(current = this.current) {
     if (this.exit(current)) return false
 
     return this.tokens[current]
   }
 
+  /*建立一个对象，将tokens的type赋值给它{type:token.type}*/
   getTokenType(current = this.current) {
     if (this.exit(current)) return false
     const { type } = this.tokens[current]
@@ -21,19 +22,24 @@ class TokensNode {
     return type
   }
 
+  //返回tokens的kewyord和value
+  /*value,keyword值为{value:tokens.value,keyword:tokens.keyword}*/
+  // 如果 token 中没有 value 就返回 keyword
   getTokenValue(current = this.current) {
     if (this.exit(current)) return false
     const { value, keyword } = this.tokens[current]
 
-    // 如果 token 中没有 value 就返回 keyword
     return value || keyword
   }
 
+  //如果tokens是数组，就返回数组长度，否者返回0
   getLength(tokens = this.tokens) {
     if (typeof tokens !== 'array') return 0
+
     return tokens.length
   }
-
+  
+  //如果tokens结束就返回false，否者返回下下个一token值,并将current+2
   next() {
     const current = ++this.current
     if (this.exit(current)) return false
@@ -46,9 +52,15 @@ class TokensNode {
    * @param {*} type 
    * @returns 
    */
+  //接受的是type，将下一个tokens的值赋给nextToken
+  //如果传入的type和下一个的type相等，
+  //就进行next函数，即将current+2
+  //并返回true，如果不相等就返回flase
   nextTest(type) {
     const nextToken = this.peek()
+
     if (type === nextToken.type) {
+
       this.next()
       return true
     }
@@ -60,8 +72,11 @@ class TokensNode {
    * 判断 type 和当前 type 是否一致 相同就 next() 否则 throw
    * @param {*} type 
    */
-  expect(type){
-    if(this.getTokenType === type) {
+  //如果token的type和传入的type相等，就进行next即current+2
+  //否者将type传入SyntaxError函数，即进行报错
+  expect(type) {
+
+    if (this.getTokenType === type) {
       this.next()
     }
 
@@ -75,6 +90,7 @@ class TokensNode {
    * @param {*} current 索引 默认为 this.current 
    * @returns 
    */
+  //如果tokens结束返回false否者返回下一个tokens的值
   peek(current = this.current + 1) {
     if (this.exit(current)) return false
 
@@ -86,6 +102,7 @@ class TokensNode {
    * @param {*} current 
    * @returns 
    */
+  //如果tokens结束就返回true否者返回false
   exit(current) {
     if (current > this.getLength()) return true
 
