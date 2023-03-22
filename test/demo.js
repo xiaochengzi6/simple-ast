@@ -1,19 +1,54 @@
-//  \n \0 \t \v \f \r \" \' \\ 
 
-const symbol = ['\n', '\0', '\t', '\v', '\f', '\r', '\"', "\'", "\\"]
-
-function names (arg){
-  arg.forEach((ele) =>{
-    const value = IsEscapeCharacter(ele)
-    console.log(value)
-  })
-}
-
-names(symbol)
-
-function IsEscapeCharacter(char){
-  if(symbol.includes(char)){
-    return true 
+class d {
+  constructor(tokens, current) {
+    this.tokens = tokens
+    this.current = current
+    this.add()
   }
-  return false 
+
+  add() {
+    this.current += 1
+  }
 }
+
+class c extends d {
+  constructor(tokens, current) {
+    super(tokens, current)
+    this.sub()
+  }
+
+  sub(){
+   this.current -= 1
+  }
+}
+
+class b extends c {
+  constructor(tokens, current) {
+    super(tokens, current)
+    this.bu()
+  }
+
+  bu(){
+    this.current += 2
+  }
+}
+
+class a extends b {
+  constructor(tokens, current) {
+    super(tokens, current)
+    const num = this.getCurrent()
+    console.log('num', num)
+  }
+
+  getCurrent(){
+    return this.current
+  }
+
+}
+
+
+const arr = [1, 2, 3, 4, 5]
+const obj = new a(arr, 0)
+
+// 输出了什么
+console.log(obj)

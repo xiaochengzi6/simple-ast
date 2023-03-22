@@ -5,8 +5,9 @@
  */
 export class ManageNode {
   constructor(parentNode) {
-    this.state = 0
-    this.end = 0
+    const {state, end} = parentNode
+    this.state = end + 1 || 0
+    this.end = null 
     this.parentNode = parentNode || undefined
   }
 
@@ -17,9 +18,10 @@ export class ManageNode {
    */
   finish(type) {
     this.type = type
-
-    // 这里不知道该如何处理
-    this.end = this.parentNode.end
+  
+    // todo 难度: *****
+    // 在调用 finish 时候说明数据处理完全，可以处理 end 
+    // this.end = 
 
     return this
   }
@@ -85,6 +87,11 @@ export class TokensNode {
     return this.tokens[++this.current]
   }
 
+  /**
+   * 判断下次的 token 的 type 与参数相同 是 next() 否 false 
+   * @param {*} type 
+   * @returns 
+   */
   nextTest(type) {
     const nextToken = this.peek()
     if (type === nextToken.type) {
@@ -95,22 +102,36 @@ export class TokensNode {
     return false
   }
 
+  /**
+   * 判断 type 和当前 type 是否一致 相同就 next() 否则 throw
+   * @param {*} type 
+   */
   expect(type){
     if(this.getTokenType === type) {
       this.next()
     }
 
     // todo 
-    // 这里如果不对就要抛错
-    return 
+    // 这里如果不对就要抛错 重写为函数
+    throw SyntaxError(type)
   }
 
+  /**
+   * 预读取下一个 token 
+   * @param {*} current 索引 默认为 this.current 
+   * @returns 
+   */
   peek(current = this.current + 1) {
     if (this.exit(current)) return false
 
     return this.tokens[current]
   }
 
+  /**
+   * 当 this.current > tokens 的长度 返回 true 否则 true
+   * @param {*} current 
+   * @returns 
+   */
   exit(current) {
     if (current > this.getLength()) return true
 

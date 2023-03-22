@@ -1,14 +1,18 @@
 import { checkRight, PunctuationType } from "../utils/index.js"
 import { ManageNode, TokensNode } from "./ManageNode.js"
 
-// 逗号
 const _Comma = '42'
-
 const _ParentLeft = '40'
 const _ParentRight = '41'
-
 const _BlockLeft = '123'
 const _BlockRight = '125'
+
+const comma = PunctuationType[_Comma].type
+const ParentLeft = PunctuationType[_ParentLeft].type
+const ParentRight = PunctuationType[_ParentRight].type
+const BlockLeft = PunctuationType[_BlockLeft].type
+const BlockRight = PunctuationType[_BlockRight].type 
+
 
 
 /**
@@ -41,13 +45,13 @@ function parser(tokens) {
       case 'function ':
         tokens.next()
         return parserFunction(node)
-      
+
       default:
         node.id = 'Default'
-        node.type = type 
+        node.type = type
     }
 
-    return node 
+    return node
   }
 
   // 这里判断的逻辑要重新设置
@@ -59,12 +63,11 @@ function parser(tokens) {
   /**
    * 对 var 关键词处理 
    * @param {*} node 
-   */ 
+   */
   function parserVar(node) {
     node.declarations = []
     node.kind = "var"
 
-    const commaType = PunctuationType[_Comma].type
     while (true) {
       const childNode = new ManageNode(node)
       childNode.id = parserIdentifier(childNode)
@@ -77,9 +80,9 @@ function parser(tokens) {
       node.declarations.push(childNode.finish("VariableDeclaration"))
 
       // 逗号
-      if (!tokens.nextTest(commaType)) break
+      if (!tokens.nextTest(comma)) break
     }
-    
+
     return node.finish("VariableDeclaration")
   }
 
@@ -91,21 +94,25 @@ function parser(tokens) {
     const node = new ManageNode(parentNode)
     node.name = tokens.getTokenValue()
 
-    // 到这就终结了程序
     tokens.next()
     return tokens.finish("Identifier")
   }
 
-  function parserFunction(node){
+  function parserFunction(node) {
     node.id = parserIdentifier(node)
     node.params = []
 
-    const ParentLeft = PunctuationType[_ParentRight].type
-    while(tokens.test(ParentLeft)){
-      tokens.next()
-      node.params.push(parserParent(node))
-    } 
-    node.body = []
+    const first = true
+
+    tokens.expect(ParentLeft)
+    while (!tokens.nextTest(ParentRight)) {
+      !first
+        ? tokens.expect(comma)
+        : first = false
+
+      node.params.push(parserIdentifier(node))
+    }
+    node.body = parserBlock(node)
 
 
     // todo
@@ -113,8 +120,28 @@ function parser(tokens) {
     return node.finish("FunctionDeclaration")
   }
 
-  function parserParent(node){
-    const node = new ManageNode()
+  // 这类函数应该不需要 括号在 js 中没有任何意义
+  function parserParent(parent) {
+    const node = new ManageNode(parent)
+
+  }
+
+  function parserBlock(parent) {
+    const node = new ManageNode(parent)
+    node.body = []
+    tokens.expect(BlockLeft)
+    
+    while(!tokens.test(BlockRight)){
+      // todo 难点：***
+      // 这里对一些严格模式进行一些处理
+
+      // 这里调用语法规则
+      // const statement = 
+
+      // node.body.push(statement)
+    }
+    
+    return node.finish("BlockStatement")
   }
 
   return node
@@ -124,14 +151,7 @@ function parser(tokens) {
 export default parser
 
 
-const tokensValue = [
-  { type: 'VariableDeclaration', kind: 'var', value: 'var' },
-  { type: 'CustomNameStatement', value: 'name' },
-  { type: 'EqualSignSymbol', value: '=' },
-  { type: 'NumberStatement', value: '89' }
-]
-
-function Warning(pos, message){
+function Warning(pos, message) {
   // todo
   // 这里去根据 input 和 pos 找到 行和列
 
