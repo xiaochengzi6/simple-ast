@@ -72,7 +72,7 @@ export const numberCode = {
 }
 
 // 各种标点符号
-const PunctuationType = {
+export const PunctuationType = {
 
   "91": {
     value: "[",

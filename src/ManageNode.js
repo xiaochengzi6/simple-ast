@@ -38,6 +38,8 @@ export class ManageNode {
       return target.push(node)
     }
   }
+
+
 }
 
 /**
@@ -91,6 +93,16 @@ export class TokensNode {
     }
 
     return false
+  }
+
+  expect(type){
+    if(this.getTokenType === type) {
+      this.next()
+    }
+
+    // todo 
+    // 这里如果不对就要抛错
+    return 
   }
 
   peek(current = this.current + 1) {

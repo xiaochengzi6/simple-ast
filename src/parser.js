@@ -1,9 +1,14 @@
-import { checkRight, KeywordType } from "../utils/index.js"
+import { checkRight, PunctuationType } from "../utils/index.js"
 import { ManageNode, TokensNode } from "./ManageNode.js"
 
 // 逗号
 const _Comma = '42'
 
+const _ParentLeft = '40'
+const _ParentRight = '41'
+
+const _BlockLeft = '123'
+const _BlockRight = '125'
 
 
 /**
@@ -13,12 +18,13 @@ const _Comma = '42'
 function parser(tokens) {
 
   const tokens = new TokensNode(tokensValue)
-  const node = new ManageNode()
-  node.type = "Program"
-  node.body = []
+  const rootNode = new ManageNode()
+  rootNode.type = "Program"
+  rootNode.body = []
 
   function walk() {
     const token = tokens.getToken()
+    const node = new ManageNode()
     // todo 
     // 这里可以做个判断 没有取到 token 会直接退出
 
@@ -31,24 +37,34 @@ function parser(tokens) {
         // todo 
         // 这里可以对最终的 var 表达式看看是否存在 ; 如果没有
         return parserVar(node)
+
       case 'function ':
         tokens.next()
-        return parseFunction(node);
-        
+        return parserFunction(node)
+      
+      default:
+        node.id = 'Default'
+        node.type = type 
     }
+
+    return node 
   }
 
   // 这里判断的逻辑要重新设置
   // todo
   while (tokens.exit()) {
-    node.body.push(walk())
+    rootNode.body.push(walk())
   }
 
+  /**
+   * 对 var 关键词处理 
+   * @param {*} node 
+   */ 
   function parserVar(node) {
     node.declarations = []
     node.kind = "var"
 
-    const commaType = KeywordType[_Comma].type
+    const commaType = PunctuationType[_Comma].type
     while (true) {
       const childNode = new ManageNode(node)
       childNode.id = parserIdentifier(childNode)
@@ -67,6 +83,10 @@ function parser(tokens) {
     return node.finish("VariableDeclaration")
   }
 
+  /**
+   * 对标识符处理
+   * @param {*} parentNode  
+   */
   function parserIdentifier(parentNode) {
     const node = new ManageNode(parentNode)
     node.name = tokens.getTokenValue()
@@ -76,14 +96,32 @@ function parser(tokens) {
     return tokens.finish("Identifier")
   }
 
+  function parserFunction(node){
+    node.id = parserIdentifier(node)
+    node.params = []
+
+    const ParentLeft = PunctuationType[_ParentRight].type
+    while(tokens.test(ParentLeft)){
+      tokens.next()
+      node.params.push(parserParent(node))
+    } 
+    node.body = []
+
+
+    // todo
+    // 这里还需要对函数声明和函数表达式做一个处理
+    return node.finish("FunctionDeclaration")
+  }
+
+  function parserParent(node){
+    const node = new ManageNode()
+  }
+
   return node
 }
 
 
-
-
 export default parser
-
 
 
 const tokensValue = [
