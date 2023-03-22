@@ -81,7 +81,7 @@ class ParserKeywords extends TokensNode {
       // 这里对一些严格模式进行一些处理
 
       // 这里调用语法规则
-      const statement = this.parserStatement()
+      const statement = this.parserExpression()
 
       node.body.push(statement)
     }

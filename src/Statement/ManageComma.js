@@ -15,8 +15,8 @@ class ManageComma extends ManageLogical {
   /**
    * 开始处理语法
    */
-  parserStatement(){
-
+  parserExpression(parent){
+    
   }
 }
 

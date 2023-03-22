@@ -1,4 +1,4 @@
-import ManageFunction from './ManageFunction.js'
+import ManageAtom from './ManageAtom.js'
 
 /**
  * 第二层
@@ -7,7 +7,7 @@ import ManageFunction from './ManageFunction.js'
  *   函数的调用 ， ` . `: 点访问法 , []: 括号访问法 
  *  
  */
-class ManageCallback extends ManageFunction{
+class ManageCallback extends ManageAtom{
   constructor(tokens){
     super(tokens)
   }
