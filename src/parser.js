@@ -1,88 +1,82 @@
 import { checkRight, KeywordType } from "../utils/index.js"
+import { ManageNode, TokensNode } from "./ManageNode.js"
+
+// 逗号
+const _Comma = '42'
+
+
 
 /**
  * 生成 ast
  * @param  tokens 
  */
 function parser(tokens) {
-  let current = 0
+
+  const tokens = new TokensNode(tokensValue)
+  const node = new ManageNode()
+  node.type = "Program"
+  node.body = []
 
   function walk() {
-    let token = tokens[current]
-    checkRight(token, `解析 token 出现问题 current: ${current}`)
+    const token = tokens.getToken()
+    // todo 
+    // 这里可以做个判断 没有取到 token 会直接退出
+
+    const { type } = token
 
     // 在这里去进行关键词判断
     switch (type) {
-      case 'switch':
-      case 'break':
-        break
-      case 'case':
-        break
-      case 'catch':
-        break
-      case 'class':
-        break
-      case 'continue':
-        break
-      case 'debugger':
-        break
-      case 'default':
-        break
-      case 'delete':
-        break
-      case 'do':
-        break
-      case 'else':
-        break
-      case 'false':
-        break
-      case 'in':
-        break
-      case 'if':
-        break
-      case 'true':
-        break
-      case 'break':
-        break
       case 'var':
-        break
-      case 'let':
-        break
-      case 'const':
-        break
+        tokens.next()
+        // todo 
+        // 这里可以对最终的 var 表达式看看是否存在 ; 如果没有
+        return parserVar(node)
       case 'function ':
-        break
-      case 'with':
-        break
-      case 'for':
-        break
-      case 'try':
-        break
-      case 'catch':
-        break
-      case 'null':
-        break
-      case 'new':
-        break
-      case 'instanceof':
-        break
-      case 'typeof':
-        break
-      default:
-        break
+        tokens.next()
+        return parseFunction(node);
+        
     }
   }
 
-  const ast = {
-    type: 'Program',
-    body: []
+  // 这里判断的逻辑要重新设置
+  // todo
+  while (tokens.exit()) {
+    node.body.push(walk())
   }
 
-  while (current < tokens.length) {
-    ast.body.push(walk())
+  function parserVar(node) {
+    node.declarations = []
+    node.kind = "var"
+
+    const commaType = KeywordType[_Comma].type
+    while (true) {
+      const childNode = new ManageNode(node)
+      childNode.id = parserIdentifier(childNode)
+      // 这里对严格模式中的 var 也做了处理 
+      // 比如：var 严格模式不能对 argument 和 eval 进行处理
+
+      // 这里去进行语法分析
+      // todo 
+
+      node.declarations.push(childNode.finish("VariableDeclaration"))
+
+      // 逗号
+      if (!tokens.nextTest(commaType)) break
+    }
+    
+    return node.finish("VariableDeclaration")
   }
 
-  return ast
+  function parserIdentifier(parentNode) {
+    const node = new ManageNode(parentNode)
+    node.name = tokens.getTokenValue()
+
+    // 到这就终结了程序
+    tokens.next()
+    return tokens.finish("Identifier")
+  }
+
+  return node
 }
 
 
@@ -90,39 +84,7 @@ function parser(tokens) {
 
 export default parser
 
-// 初始化 token 节点
-function InitTokenNode(){
-  this.start = 0
-  this.end = 0
-  this.type = null
-}
 
-
-// 处理 tokens 
-class TokensNode {
-  constructor(tokens) {
-    this.tokens = tokens
-    this.length = tokens.length
-    this.current = 0
-  }
-
-  getToken(current = this.current) {
-    return this.tokens[current]
-  }
-
-  getLength(tokens = this.tokens) {
-    if (typeof tokens !== 'array') return 0
-    return tokens.length
-  }
-
-  next() {
-    return this.tokens[++this.current]
-  }
-
-  peek(current = this.current + 1) {
-    return this.tokens[current]
-  }
-}
 
 const tokensValue = [
   { type: 'VariableDeclaration', kind: 'var', value: 'var' },
@@ -131,8 +93,9 @@ const tokensValue = [
   { type: 'NumberStatement', value: '89' }
 ]
 
-const tokens = new TokensNode(tokensValue)
+function Warning(pos, message){
+  // todo
+  // 这里去根据 input 和 pos 找到 行和列
 
-function paserVar(node) {
-
+  throw new SyntaxError(message)
 }
