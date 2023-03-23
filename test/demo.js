@@ -18,8 +18,8 @@ class c extends d {
     this.sub()
   }
 
-  sub(){
-   this.current -= 1
+  sub() {
+    this.current -= 1
   }
 }
 
@@ -29,7 +29,7 @@ class b extends c {
     this.bu()
   }
 
-  bu(){
+  bu() {
     this.current += 2
   }
 }
@@ -41,7 +41,7 @@ class a extends b {
     console.log('num', num)
   }
 
-  getCurrent(){
+  getCurrent() {
     return this.current
   }
 
