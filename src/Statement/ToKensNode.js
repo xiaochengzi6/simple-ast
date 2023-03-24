@@ -39,14 +39,16 @@ class TokensNode {
     return tokens.length
   }
   
-  //如果tokens结束就返回false，否者返回下下个一token值,并将current+2
   next() {
     const current = ++this.current
     if (this.exit(current)) return false
 
-    return this.tokens[++this.current]
+    return this.tokens[current]
   }
 
+  test(type){
+    return this.getTokenType() === type
+  }
   /**
    * 判断下次的 token 的 type 与参数相同 是 next() 否 false 
    * @param {*} type 
@@ -54,7 +56,7 @@ class TokensNode {
    */
   //接受的是type，将下一个tokens的值赋给nextToken
   //如果传入的type和下一个的type相等，
-  //就进行next函数，即将current+2
+  //就进行next函
   //并返回true，如果不相等就返回flase
   nextTest(type) {
     const nextToken = this.peek()

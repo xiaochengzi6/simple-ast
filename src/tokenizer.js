@@ -5,7 +5,9 @@ import {
   getChatCode,
   KeywordType,
   getPunctuation,
-  IsEscapeCharacter
+  IsEscapeCharacter,
+  IDENTIFIER,
+  REGESTATEMENT
 } from '../utils/index.js'
 import { IsString } from './../utils/index.js';
 
@@ -26,6 +28,7 @@ function tokenizer(input) {
     readToken(char)
   }
 
+  // todo 重构成 switch 
   function readToken(char) {
     // 字母
     if (IsVariableLetter(char)) {
@@ -69,6 +72,7 @@ function tokenizer(input) {
 
     // 关键词处理
     // 问题：不能处理 else if 
+    // 这里的问题 应该在 parser 阶段处理 
     const keywordNode = KeywordType[value]
     if (keywordNode != null && value === keywordNode.keyword) {
 
@@ -79,9 +83,9 @@ function tokenizer(input) {
       })
     }
 
-    // 默认的
+    // 标识符
     return tokens.push({
-      type: 'CustomNameStatement',
+      type: IDENTIFIER,
       value
     })
   }
@@ -101,8 +105,12 @@ function tokenizer(input) {
     })
   }
 
+  // todo
+  // 这段函数重构程 switch 
   function readSymbol(char) {
 
+    // todo 
+    // 这里后面给提到 walk 里面 如果有直接去跳过
     // 处理空格
     if (char === 32) {
       // 默认不处理
@@ -116,6 +124,66 @@ function tokenizer(input) {
 
       current++
       return
+    }
+
+    // 一元操作符：处理 ++ -- 
+    if (char === (43 || 45)) {
+      const nextCurrent = current + 1
+      const next = input[nextCurrent]
+
+      let { value: nextValue, type, charCode } = getPunctuation(getChatCode(next))
+      if (charCode && charCode === char) {
+        current = nextCurrent + 1
+        nextValue += String.fromCharCode(char)
+
+        return tokens.push({
+          type,
+          value: nextValue,
+          prefix: true,
+          isUpdate: true,
+          postfix: true
+        })
+      }
+    }
+
+    // 处理正则 / 及 注释
+    if (char === 47) {
+      let content = input[++current]
+      let charCode = getChatCode(content)
+      let value = ''
+      let IsCommemt = false, first = true
+
+      // 当行注释
+      if (char === 47) {
+        content == input[++current]
+        while (content !== '\n') {
+          content = input[++current]
+        }
+        current++
+        return
+      }
+
+      // 正则
+      while (charCode !== 47) {
+        if (first && charCode === 42) {
+          IsCommemt = true
+        }
+        value += content
+
+        charCode = getChatCode(input[++current])
+      }
+
+      // 多行注释
+      if (value.slice(-2, -1) === "*") {
+        current++
+        return
+      }
+
+      current++
+      return tokens.push({
+        type: REGESTATEMENT,
+        value
+      })
     }
 
     const { value, type } = getPunctuation(char)
@@ -228,10 +296,10 @@ function tokenizer(input) {
     }
 
     current++
-    return tokens.push(result) 
+    return tokens.push(result)
   }
 
-  
+
   return tokens
 }
 

@@ -1,22 +1,18 @@
-import { PunctuationType } from "../jutils/index.js"
 import ManageNode from "../ManageNode.js";
 import TokensNode from './ToKensNode';
+import {
+  ParentLeft,
+  Comma,
+  ParentRight,
+  BlockLeft,
+  BlockLeft
+} from './../../utils/index';
 
-const _Comma = '42'
-const _ParentLeft = '40'
-const _ParentRight = '41'
-const _BlockLeft = '123'
-const _BlockRight = '125'
 
-export const comma = PunctuationType[_Comma].type
-export const ParentLeft = PunctuationType[_ParentLeft].type
-export const ParentRight = PunctuationType[_ParentRight].type
-export const BlockLeft = PunctuationType[_BlockLeft].type
-export const BlockRight = PunctuationType[_BlockRight].type 
 
 class ParserKeywords extends TokensNode {
   constructor(tokens) {
-   super(tokens)
+    super(tokens)
   }
 
   parserVar(node) {
@@ -35,7 +31,7 @@ class ParserKeywords extends TokensNode {
       node.declarations.push(childNode.finish("VariableDeclaration"))
 
       // 逗号
-      if (!this.tokens.nextTest(comma)) break
+      if (!this.tokens.nextTest(Comma)) break
     }
 
     return node.finish("VariableDeclaration")
@@ -58,7 +54,7 @@ class ParserKeywords extends TokensNode {
     this.tokens.expect(ParentLeft)
     while (!tokens.nextTest(ParentRight)) {
       !first
-        ? this.tokens.expect(comma)
+        ? this.tokens.expect(Comma)
         : first = false
 
       node.params.push(this.parserIdentifier(node))

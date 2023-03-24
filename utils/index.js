@@ -1,6 +1,14 @@
 //===========================================================================
 //==                                常量                                   ==
 //===========================================================================
+const _Comma = '42'
+const _ParentLeft = '40'
+const _ParentRight = '41'
+const _BlockLeft = '123'
+const _BlockRight = '125'
+const _ArrayLeft = '91'
+const _ArrayRight = '93'
+
 export const LetterCode = {
   // a -z code: 97 -> 122
   a: 97,
@@ -398,15 +406,28 @@ export const KeywordType = {
   }
 }
 
+export const IDENTIFIER = "IdentifierStatement"
+export const STRINGSTATEMENT = "StringStatement"
+export const NUMBERSTATEMENT = "NumberStatement"
+export const REGESTATEMENT = "RegeStatement"
+
+export const Comma = PunctuationType[_Comma].type
+export const ParentLeft = PunctuationType[_ParentLeft].type
+export const ParentRight = PunctuationType[_ParentRight].type
+export const BlockLeft = PunctuationType[_BlockLeft].type
+export const BlockRight = PunctuationType[_BlockRight].type 
+export const ArrayLeft = PunctuationType[_ArrayLeft].type
+export const ArrayRight = PunctuationType[_ArrayRight].type
+
 let tokenizerTypeName = {
-  "CustomNameStatement": {
-    type: "CustomNameStatement"
+  "IdentifierStatement": {
+    type: IDENTIFIER
   },
   "NumberStatement": {
-    type: "NumberStatement"
+    type: NUMBERSTATEMENT
   },
   "StringStatement": {
-    type: "StringStatement"
+    type: STRINGSTATEMENT
   }
 }
 
@@ -535,7 +556,8 @@ export function getPunctuation(charCode) {
   if (target != null) {
     return target
   } else {
-    throw TypeError(`有其他符号没有被处理${charCode}`)
+    return false
+    // throw TypeError(`有其他符号没有被处理${charCode}`)
   }
 }
 

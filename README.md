@@ -86,7 +86,7 @@ switch(type){
 4.0.0 符号处理 `= || += || -= || ,` 
 
 
-### 语法解析算法
+### 语法解析算法 v1.0
 1.0.0 一元操作符处理
   1.1.0 前缀处理
     1.1.1 init node 
@@ -117,10 +117,10 @@ switch(type){
       1.2.12.4 return 1.2.0 Result
 
   1.3.0 后缀处理
-    1.3.1 拿到 1.1.1 node
-    1.3.2 node{operator: value, prefix: true}
-    1.3.3 node.argument => 1.3.0 
-    1.3.5 test node.argument
+    1.3.1 init node && resultNode = 1.2.0 返回值
+    1.3.2 resultNode{operator: value, prefix: true}
+    1.3.3 resultNode.argument => 1.3.0 
+    1.3.5 test resultNode.argument
     1.3.6 next()
     1.3.7 return 1.2.12 Result
 
