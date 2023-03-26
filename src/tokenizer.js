@@ -118,14 +118,6 @@ function tokenizer(input) {
       return
     }
 
-    // 处理反斜杠
-    if (char === 92) {
-      consoel.log('TODO: 处理反斜杠')
-
-      current++
-      return
-    }
-
     // 一元操作符：处理 ++ -- 
     if (char === (43 || 45)) {
       const nextCurrent = current + 1
@@ -143,6 +135,22 @@ function tokenizer(input) {
           isUpdate: true,
           postfix: true
         })
+      } else {
+        // todo 处理 += -=
+        if (charCode === 61) {
+          nextValue += String.fromCharCode(char)
+          current++
+          return tokens.push({
+            type,
+            value: nextValue,
+            before: true
+          })
+        }
+
+        const result = matheOperation(char)
+        current++
+
+        return result
       }
     }
 
@@ -184,6 +192,75 @@ function tokenizer(input) {
         type: REGESTATEMENT,
         value
       })
+    }
+
+    // > or <
+    if (char === (60 || 62)) {
+      const result = matheOperation(char)
+      current++
+
+      return result
+    }
+
+    // != 
+    if (char === 33) {
+      let nextValue = input[current + 1]
+      const nextCharCode = getChatCode(nextValue)
+      if (nextCharCode === 61) {
+        return tokens.push({
+          type: "UnequalSymbol",
+          value: Stirng.fromCharCode(char) + nextValue,
+          grade: 6
+        })
+      }
+    }
+    //  == or ===  
+    if (char === 61) {
+      let target = getChatCode(input[++current])
+      let index = 0
+      while (IsSymbol(target) && target === 61) {
+        index++
+        target = getChatCode(input[++current])
+      }
+
+      const { type } = getPunctuation(char)
+      // =
+      if (index === 0) {
+        current++
+        return tokens.push({
+          type,
+          value: "=",
+          before: true
+        })
+      }
+      // ==
+      else if (index === 1) {
+        current++
+        return tokens.push({
+          type: "EqualStatement",
+          value: "==",
+          before: true
+        })
+      }
+      // ===
+      else if (index === 2) {
+        current++
+        return tokens.push({
+          type: "CongruentStatement",
+          value: "===",
+          before: true
+        })
+      }else {
+        throw SyntaxError("文件中语法错误")
+      }
+    }
+
+    // 处理反斜杠
+    if (char === 92) {
+      consoel.log('TODO: 处理反斜杠')
+
+      current++
+      return
     }
 
     const { value, type } = getPunctuation(char)
@@ -305,3 +382,36 @@ function tokenizer(input) {
 
 
 export default tokenizer
+
+
+// 逻辑运算
+function matheOperation(char) {
+  const { type, value } = getPunctuation(char)
+  // + or -
+  if (char === (43 || 45)) {
+    return {
+      type,
+      value,
+      grade: 9
+    }
+  }
+  // * or /
+  else if (char === (42 || 47)) {
+    return {
+      type,
+      value,
+      grad: 10
+    }
+  }
+  // > or <
+  else if (char === (60 || 62)) {
+    return {
+      type,
+      value,
+      grad: 8
+    }
+  }
+  else {
+    throw TypeError(`逻辑处理遇到不能处理的char${char}`)
+  }
+}

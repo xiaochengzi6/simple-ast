@@ -1,11 +1,7 @@
 import tokenizer from "../src/tokenizer.js"
 
 const value = `
-var a = 1 // sjdsaidsda
-//dsjdkajda;
-var b = 2
-/*dssdd*/
-// /********/
+var b = c ===
 `
 const token = tokenizer(value)
 

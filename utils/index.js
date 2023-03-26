@@ -182,7 +182,7 @@ export const PunctuationType = {
   "43": {
     value: "+",
     type: "AdditionSymbol",
-    charCode: 43
+    charCode: 43,
   },
 
   "45": {
@@ -208,7 +208,11 @@ export const PunctuationType = {
     type: "PercentSymbol",
     charCode: 37
   },
-
+  "33":{
+    value: "!",
+    type: "ExclaSymbol",
+    charCode: 33
+  },
   // 空格
   "32": {
     value: " ",
@@ -230,6 +234,18 @@ export const PunctuationType = {
     value: ">",
     type: "GreaterThanSymbol",
     charCode: 62
+  },
+
+  // 逻辑运算
+  "124":{
+    value: "|",
+    type: "OrOperaSymbol",
+    charCode: 124
+  },
+  "38": {
+    value: "&",
+    type: "AndOperaSymbol",
+    charCode: 38
   }
 }
 
