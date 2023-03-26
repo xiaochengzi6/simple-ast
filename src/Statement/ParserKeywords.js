@@ -7,7 +7,10 @@ import {
   BlockLeft,
   BlockRight,
   EqualSignSymbol,
-  ColonSymbol
+  ColonSymbol,
+  _Else,
+  _Catch,
+  _Finally
 } from './../../utils/index.js';
 
 
@@ -28,6 +31,88 @@ class ParserKeywords extends TokensNode {
 
     // 在这里去进行关键词判断
     switch (value) {
+      case 'debugger':
+        this.next()
+        return node.finish("DebuggerStatement")
+
+      case 'if':
+        this.next()
+        // 处理 括号
+        node.test = this.parserParent(node)
+        node.consequent = this.walk()
+        node.alternate = this.test(_Else) ? this.walk() : null
+
+        return node.finish("IfStatement")
+
+      case 'with':
+        this.next()
+        node.object = this.parserParent(node)
+        node.body = this.walk()
+        return node.finish("WithStatement")
+
+      case 'while':
+        this.next()
+        node.test = this.parserParent(node)
+        node.body = this.walk()
+        return node.finish("WhileStatement")
+
+      case 'try':
+        this.next()
+        node.block = this.parserBlock()
+        node.handlers = []
+        console.log(this.getTokenType())
+        while (this.getTokenType() === _Catch) {
+          const childNode = new ManageNode(node)
+          this.next()
+          console.log(this.getTokenType() === ParentLeft)
+          // this.expect(ParentLeft)
+          childNode.param = this.parserParent()
+          //  todo 
+          // 在这里校验 param 正确性
+
+          childNode.guard = null
+          childNode.body = this.parserBlock()
+
+          node.handlers.push(childNode.finish("CatchClause"))
+        }
+        node.finalizer = this.test(_Finally) ? this.parserBlock() : null
+
+        if (!node.handlers.length && !node.finalizer) {
+          console.log(JSON.stringify(node))
+          // 抛错
+          throw SyntaxError("必须要有 catch or finally")
+        }
+
+        return node.finish("TryStatement")
+
+      case 'throw':
+        this.next()
+        // todo
+        // 这里可以测试有没有换行  存在换行就抛错
+        node.argument = this.parseExpression()
+        return node.finish("ThrowStatement")
+
+      case 'return':
+        // todo  
+        // 这里要实现当前 token 是否在函数体内 不然就会抛错
+
+        this.next()
+        if (this.nextTest(BlockRight)) {
+          node.argument = null
+        } else {
+          node.argument = this.parseExpression()
+        }
+
+        return node.finish("ReturnStatement")
+
+      case 'for':
+        this.next()
+        this.expect(ParentLeft)
+        // ';'有意义 不能随意跳过，这里要做对 ; 的处理
+        return
+      case ';':
+
+        return
       case 'var':
         this.next()
         // todo 
@@ -38,8 +123,11 @@ class ParserKeywords extends TokensNode {
         this.next()
         return this.parserFunction(node)
 
+      case "{":
+        return this.parserBlock(node)
+
       default:
-        if(this.getTokenType === "UnknownStatement"){
+        if (this.getTokenType === "UnknownStatement") {
           node.ERROR = "出现未知类型"
           node.value = this.getTokenValue()
           node.current = this.current
@@ -54,7 +142,7 @@ class ParserKeywords extends TokensNode {
           node.label = result
           return node.finish("LabeledStatement")
         }
-      
+
         else {
           node.expression = result
           return node.finish("ExpressionStatement")
@@ -140,6 +228,13 @@ class ParserKeywords extends TokensNode {
     return node.finish("BlockStatement")
   }
 
+  parserParent(parent) {
+    this.expect(ParentLeft)
+    const node = this.parseExpression(parent)
+    this.expect(ParentRight)
+
+    return node
+  }
 
 }
 

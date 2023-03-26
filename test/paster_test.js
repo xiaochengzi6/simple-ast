@@ -1,10 +1,13 @@
 import parser from "../src/parser.js"
 import tokenizer from "../src/tokenizer.js"
-import stringifyObject from 'stringify-object';
+import stringifyObject from 'stringify-object'
 
-const target = `function a () {
+const target = `try{
   var a = 1
-}`
+}catch(e){
+  var b = 2
+}
+`
 
 const tokens = tokenizer(target)
 

@@ -5,6 +5,8 @@ import {
   ArrayLeft,
   ArrayRight,
   BlockLeft,
+  BlockRight,
+  ColonSymbol,
   Comma,
   IDENTIFIER,
   KeywordType,
@@ -24,8 +26,8 @@ const New = KeywordType['new']
 /**
  * 关键词处理
  */
-class ExKeyWords extends ExUnaryOp{
-  constructor(tokens){
+class ExKeyWords extends ExUnaryOp {
+  constructor(tokens) {
     super(tokens)
   }
 
@@ -40,7 +42,7 @@ class ExKeyWords extends ExUnaryOp{
 
       // 标识符
       case IDENTIFIER:
-        return this.parserIdeentifier(parent)
+        return this.parserIdentifier(parent)
 
       // number || string || reg
       case NUMBERSTATEMENT:
@@ -60,9 +62,8 @@ class ExKeyWords extends ExUnaryOp{
 
       // 对象
       case BlockLeft:
-        this.next()
-        // todo
-        return
+
+        return this.parseObj()
 
       // 数组
       case ArrayLeft:
@@ -100,6 +101,43 @@ class ExKeyWords extends ExUnaryOp{
         // todo 
         return
     }
+  }
+
+  parseObj(parent) {
+    const node = new ManageNode(parent)
+    let first = true
+    node.properties = []
+    this.next()
+
+    while (!this.test(BlockRight)) {
+      if (!first) {
+        this.expect(Comma)
+      } else {
+        first = false
+      }
+
+      const prop = { key: this.parseObjKey(node) }
+
+      if (this.test(ColonSymbol)) {
+        prop.value = this.parseExpression(node)
+        prop.kind = "init"
+      }
+
+      // todo 
+      // 这里并没有对 es6 以及  get set 做任何处理
+
+      node.properties.push(prop)
+    }
+
+    return node.finish("ObjectExpression")
+  }
+
+  parseObjKey(parent) {
+    if (this.getTokenType === ("NumberStatement" || "StringStatement")) {
+      return this.parseExKeyWords(parent)
+    }
+
+    return this.parserIdentifier(parent)
   }
 }
 

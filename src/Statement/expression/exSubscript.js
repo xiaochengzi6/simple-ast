@@ -1,6 +1,7 @@
-import { ArrayLeft, ArrayRight, BlockLeft, BlockRight, Comma, DotSymbol } from "../../../utils/index.js"
+import { ArrayLeft, ArrayRight, Comma, DotSymbol, ParentRight } from "../../../utils/index.js"
 import ExKeyWords from "./exKeyWords.js"
 import ManageNode from './../../ManageNode.js'
+import { ParentLeft } from './../../../utils/index.js'
 
 /**
  * 处理下标
@@ -28,12 +29,12 @@ class ExSubscript extends ExKeyWords {
 
       return this.parseExSubscript(node.finish("MemberExpression"))
     }
-    else if (this.test(BlockLeft)) {
+    else if (this.test(ParentLeft)) {
       const node = ManageNode(parent, this.getToken())
       node.callee = parent
 
       let arr = [], first = true
-      while (!this.test(BlockRight)) {
+      while (!this.test(ParentRight)) {
         if (!first) {
           this.expect(Comma)
         } else {

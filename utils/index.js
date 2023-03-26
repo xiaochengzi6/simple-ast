@@ -14,6 +14,10 @@ const _QUestion = '63'
 const _Colon = '58'
 const _Semi = '59'
 
+const _ElseValue = "else"
+const _CatchValue = "catch"
+const _FinallyValue = "finally"
+
 export const LetterCode = {
   // a -z code: 97 -> 122
   a: 97,
@@ -432,6 +436,7 @@ export const STRINGSTATEMENT = "StringStatement"
 export const NUMBERSTATEMENT = "NumberStatement"
 export const REGESTATEMENT = "RegeStatement"
 
+// 符号
 export const Comma = PunctuationType[_Comma].type
 export const ParentLeft = PunctuationType[_ParentLeft].type
 export const ParentRight = PunctuationType[_ParentRight].type
@@ -444,6 +449,12 @@ export const DotSymbol = PunctuationType[_DotSymbol].type
 export const Question = PunctuationType[_QUestion].type
 export const ColonSymbol = PunctuationType[_Colon].type
 export const SemiSymbol = PunctuationType[_Semi].type
+
+// 关键词
+export const _Else = KeywordType[_ElseValue].type 
+export const _Catch = KeywordType[_CatchValue].type
+export const _Finally = KeywordType[_FinallyValue].type
+
 
 let tokenizerTypeName = {
   "IdentifierStatement": {

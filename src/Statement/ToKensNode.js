@@ -47,6 +47,7 @@ class TokensNode {
     const { type, blank } = this.tokens[current]
     
     // ; 跳过
+    // 但不知道跳过后会有什么问题
     if (type === SemiSymbol) {
       this.next()
     }
