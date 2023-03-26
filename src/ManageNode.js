@@ -4,8 +4,11 @@
  */
 class ManageNode {
   constructor(parentNode) {
-    const {state, end} = parentNode
-    this.state = end + 1 || 0
+    let end = 0
+    if(parentNode){
+      end = parentNode.end 
+    }
+    this.start = end + 1
     this.end = null 
     this.parentNode = parentNode || undefined
   }

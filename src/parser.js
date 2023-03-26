@@ -1,4 +1,4 @@
-import { ManageNode } from "./ManageNode.js"
+import ManageNode from "./ManageNode.js"
 import Deal from "./Statement/index.js"
 
 
@@ -7,7 +7,7 @@ import Deal from "./Statement/index.js"
  * @param  tokens 
  */
 function parser(tokens) {
-  const deal = new Deal(tokens)
+  const deal = Deal(tokens)
 
   const rootNode = new ManageNode()
   rootNode.type = "Program"
@@ -18,11 +18,14 @@ function parser(tokens) {
     const node = new ManageNode()
     // todo 
     // 这里可以做个判断 没有取到 token 会直接退出
+    console.log("CURRENT: ", deal.current)
+    console.log(deal.exit())
+    if(deal.exit()){ return }
 
-    const { type } = token
+    const { type, value } = token
 
     // 在这里去进行关键词判断
-    switch (type) {
+    switch (value) {
       case 'var':
         deal.next()
         // todo 
@@ -36,16 +39,18 @@ function parser(tokens) {
       default:
         node.id = 'Default'
         node.type = type
+        deal.next()
+        console.log("DEFAULT: 使用默认值")
     }
 
     return node
   }
 
-  while(deal.exit()){
+  while (!deal.exit()) {
     rootNode.body.push(walk())
   }
 
-  return rootNode 
+  return rootNode
 }
 
 

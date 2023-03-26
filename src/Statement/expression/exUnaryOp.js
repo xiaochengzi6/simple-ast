@@ -1,9 +1,8 @@
 // 一元操作符
 import ManageNode from './../../ManageNode.js'
-import ExKeyWords from './exKeyWords.js'
+import ParserKeywords from './../ParserKeywords.js'
 
-
-class ExUnaryOp extends ExKeyWords {
+class ExUnaryOp extends ParserKeywords{
   constructor(tokens) {
     super(tokens)
   }
@@ -23,11 +22,11 @@ class ExUnaryOp extends ExKeyWords {
    */
   parseExUnaryOp(parent) {
     const node = new ManageNode(parent)
-    const { prefix, value, isUpdate, postfix } = this.tokens.getToken()
+    const { prefix, value, isUpdate, postfix } = this.getToken()
     if (prefix) {
       node.operator = value
       node.prefix = true
-      this.tokens.next()
+      this.next()
       node.argument = this.parseExUnaryOp(node)
 
       // 如果前面出现 ++ or -- 那就在这里要去判断
@@ -44,8 +43,11 @@ class ExUnaryOp extends ExKeyWords {
       return node.finish(isUpdate ? "UpdateExpression" : "UnaryExpression")
     }
 
-    let resultNode = this.parseExKeyWords(prefix ? node : parent)
-
+    // 处理关键词
+    const resultKeyword = this.parseExKeyWords(prefix ? node : parent)
+    // 处理下标
+    let resultNode = this.parseExSubscript(resultKeyword)
+    
     if (postfix) {
       const node = new ManageNode(parent)
       node.operator = resultNode 
@@ -56,7 +58,7 @@ class ExUnaryOp extends ExKeyWords {
       // 检查一下 resultNode 是否符合要求
       // resultNode 是 Identifier or MemberExpression
 
-      this.tokens.next()
+      this.next()
       resultNode = node.finish("UpdateExpression")
     }
 

@@ -3,12 +3,12 @@ import tokenizer from "../src/tokenizer.js"
 
 
 
-const target = `
-function add(x, y) { return x + y}
-`
+const target = 'var a = 1'
 
 const tokens = tokenizer(target)
 
-const result = JSON.stringify(parser(tokens))
+console.log(tokens)
+
+const result = parser(tokens)
 
 console.log(result)

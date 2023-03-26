@@ -8,6 +8,8 @@ const _BlockLeft = '123'
 const _BlockRight = '125'
 const _ArrayLeft = '91'
 const _ArrayRight = '93'
+const _Equal = '61'
+const _DotSymbol = '46'
 
 export const LetterCode = {
   // a -z code: 97 -> 122
@@ -418,6 +420,9 @@ export const BlockLeft = PunctuationType[_BlockLeft].type
 export const BlockRight = PunctuationType[_BlockRight].type 
 export const ArrayLeft = PunctuationType[_ArrayLeft].type
 export const ArrayRight = PunctuationType[_ArrayRight].type
+export const EqualSignSymbol = PunctuationType[_Equal].type
+export const DotSymbol = PunctuationType[_DotSymbol].type
+
 
 let tokenizerTypeName = {
   "IdentifierStatement": {

@@ -34,11 +34,10 @@ class TokensNode {
 
   //如果tokens是数组，就返回数组长度，否者返回0
   getLength(tokens = this.tokens) {
-    if (typeof tokens !== 'array') return 0
 
     return tokens.length
   }
-  
+
   next() {
     const current = ++this.current
     if (this.exit(current)) return false
@@ -46,9 +45,15 @@ class TokensNode {
     return this.tokens[current]
   }
 
-  test(type){
-    return this.getTokenType() === type
+  test(type) {
+    if (this.getTokenType() === type) {
+      this.next()
+      return true 
+    }else{
+      return false 
+    }
   }
+  
   /**
    * 判断下次的 token 的 type 与参数相同 是 next() 否 false 
    * @param {*} type 
@@ -105,8 +110,8 @@ class TokensNode {
    * @returns 
    */
   //如果tokens结束就返回true否者返回false
-  exit(current) {
-    if (current > this.getLength()) return true
+  exit(current = this.current) {
+    if (current >= this.getLength()) return true
 
     return false
   }

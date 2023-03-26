@@ -1,12 +1,13 @@
 import ManageNode from "../ManageNode.js";
-import TokensNode from './ToKensNode';
+import TokensNode from './ToKensNode.js';
 import {
   ParentLeft,
   Comma,
   ParentRight,
   BlockLeft,
-  BlockLeft
-} from './../../utils/index';
+  BlockRight,
+  EqualSignSymbol
+} from './../../utils/index.js';
 
 
 
@@ -21,17 +22,22 @@ class ParserKeywords extends TokensNode {
 
     while (true) {
       const childNode = new ManageNode(node)
-      childNode.id = parserIdentifier(childNode)
+      childNode.id = this.parserIdentifier(childNode)
       // 这里对严格模式中的 var 也做了处理 
       // 比如：var 严格模式不能对 argument 和 eval 进行处理
 
       // 这里去进行语法分析
       // todo 
 
+      childNode.init =
+        this.test(EqualSignSymbol) ?
+          this.parseExUnaryOp(node) :
+          null
+
       node.declarations.push(childNode.finish("VariableDeclaration"))
 
       // 逗号
-      if (!this.tokens.nextTest(Comma)) break
+      if (!this.test(Comma)) break
     }
 
     return node.finish("VariableDeclaration")
@@ -39,10 +45,10 @@ class ParserKeywords extends TokensNode {
 
   parserIdentifier(parentNode) {
     const node = new ManageNode(parentNode)
-    node.name = this.tokens.getTokenValue()
+    node.name = this.getTokenValue()
 
-    this.tokens.next()
-    return this.tokens.finish("Identifier")
+    this.next()
+    return node.finish("Identifier")
   }
 
   parserFunction(node) {
@@ -51,10 +57,10 @@ class ParserKeywords extends TokensNode {
 
     const first = true
 
-    this.tokens.expect(ParentLeft)
-    while (!tokens.nextTest(ParentRight)) {
+    this.expect(ParentLeft)
+    while (!this.test(ParentRight)) {
       !first
-        ? this.tokens.expect(Comma)
+        ? this.expect(Comma)
         : first = false
 
       node.params.push(this.parserIdentifier(node))
@@ -70,7 +76,7 @@ class ParserKeywords extends TokensNode {
   parserBlock(parent) {
     const node = new ManageNode(parent)
     node.body = []
-    this.tokens.expect(BlockLeft)
+    this.expect(BlockLeft)
 
     while (!tokens.test(BlockRight)) {
       // todo 难点：***
