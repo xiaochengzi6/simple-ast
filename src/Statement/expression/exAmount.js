@@ -1,20 +1,31 @@
 import ManageNode from '../../ManageNode.js'
-import ParserKeywords from '../ParserKeywords.js'
-//+=、-=、=
-class amount extends ''{
-  constructor(tokens){
+import ExTernaryOperation from './exTernaryOperations';
+
+
+/**
+ * 处理 +=， -=， =
+ */
+class ExAmount extends ExTernaryOperation {
+  constructor(tokens) {
     super(tokens)
   }
-  amount(parent){
-    const value = this.ternaryOperations()
-    if(this.test('+=')||this.test('-=')||this.test('=')){
-      const node =new ManageNode(parent)
-      node.operator = true
-      node.left = amount
+
+  parseAmount(parent) {
+    const result = this.parseTernaryOperations(parent)
+    const { before, value } = this.getToken()
+
+    if (before) {
+      const node = new ManageNode(result)
+      node.operator = value
+      node.left = result 
       this.next()
-      node.right = this.amount(node)
-      return node
+      node.right = this.parseAmount(node)
+
+      return node.finish("AssignmentExpression")
     }
-    return value
+
+    return result
   }
 }
+
+export default ExAmount

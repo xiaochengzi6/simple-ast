@@ -1,21 +1,31 @@
+import { ColonSymbol, Question } from '../../../utils/index.js';
 import ManageNode from '../../ManageNode.js'
-import ParserKeywords from '../ParserKeywords.js'
-//三元运算
-class ternaryOperation extends ''{
-  constructor(tokens){
+import ExAmount from './exAmount';
+
+/**
+ * 三元运算符号
+ */
+class ExTernaryOperation extends ExAmount {
+  constructor(tokens) {
     super(tokens)
   }
-  ternaryOperation(parent){
-    const lojic = ''
-    const node =new ManageNode()
-    if(this.test('?')){
-      node.test = lojic
+  
+  ParseTernaryOperation(parent) {
+    const logicValue = this.parseExLogic(parent)
+
+    if (this.test(Question)) {
+      const node = new ManageNode(logicValue)
+      node.test = logicValue
       node.consequent = this.parseExUnaryOp(node)
-      if(this.test(':')){
-        node.alternate = this.parseExUnaryOp(node)
-        return node
-      }
+
+      this.expect(ColonSymbol)
+
+      node.alternate = this.parseExUnaryOp(node)
+      return node.finish("ConditionalExpression")
     }
-    return lojic
+
+    return logicValue
   }
 }
+
+export default ExTernaryOperation

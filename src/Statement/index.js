@@ -1,9 +1,7 @@
-
-import ExKeyWords from './expression/exKeyWords.js'
-
+import { ParseExpression } from "./expression"
 
 function Deal(tokens){
-  const statement = new ExKeyWords(tokens)
+  const statement = new ParseExpression(tokens)
 
   return statement 
 }

@@ -144,7 +144,7 @@ switch(type){
   4.1.0 拿到 3.0.0 返回值
   4.2.0
   4.3.0 type === "= || += || -="
-    4.3.1 node{operator: true, left: 4.1.0}
+    4.3.1 node{operator: value, left: 4.1.0}
     4.3.2 next()
     4.3.3 node{right: 4.0.0}
     4.3.4 return node 
@@ -154,7 +154,7 @@ switch(type){
   5.1.0 拿到 4.0.0 返回值
   5.2.0 type === ","
     5.2.0 init node
-    5.2.1 node{expressions: 5.1.0}
+    5.2.1 node{expressions: [5.1.0] }
     5.2.2 while(type !== ",")
       5.2.2.1 node.expressions.push(1.0.0)
   5.3.0 return 4.0.0 Result 
