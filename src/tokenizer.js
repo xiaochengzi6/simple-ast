@@ -250,7 +250,7 @@ function tokenizer(input) {
           value: "===",
           before: true
         })
-      }else {
+      } else {
         throw SyntaxError("文件中语法错误")
       }
     }
@@ -312,20 +312,16 @@ function tokenizer(input) {
       case '\n':
         result = {
           type: 'LineFeedStatement',
-          value: '\n'
-        }
-        break
-      case '\0':
-        result = {
-          type: 'NullStatement',
-          value: 'null'
+          value: '\n',
+          blank: true
         }
         break
       case '\t':
         result = {
           type: 'TabulationStatement',
           // 制表符号默认 4 空格
-          value: '    '
+          value: '    ',
+           blank: true
         }
         break
       case '\v':
@@ -333,39 +329,41 @@ function tokenizer(input) {
         result = {
           type: 'VerticalStatement',
           // 垂直制表符默认为 换行
-          value: '\n'
+          value: '\v',
+          blank: true
         }
         break
       case '\f':
         // 换页符号
         result = {
           type: 'PageBreakStatement',
-          // 换页符号默认没有
-          value: ''
+          value: '\f',
+          blank: true
         }
         break
       case '\r':
         result = {
           type: "CarriageStatement",
           // 默认回车符号为换行
-          type: "\n"
+          type: "\n",
+          blank: true
         }
         break
       case '\"':
         result = {
-          type: "DoubleQuotationStatement",
+          type: "StringStatement",
           value: '"'
         }
         break
       case "\'":
         result = {
-          type: "SingleQuotationStatement",
+          type: "StringStatement",
           value: "'"
         }
         break
       default:
         result = {
-          type: "Default_Symbol_value",
+          type: "UnknownStatement",
           value: target,
           chatCode: char
         }

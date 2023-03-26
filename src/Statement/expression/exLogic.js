@@ -1,4 +1,3 @@
-
 import ExSubscript from './exSubscript.js'
 
 class ExLogic extends ExSubscript {
@@ -9,6 +8,7 @@ class ExLogic extends ExSubscript {
   parseExLogic(parent){
     const unaryOpNode = this.parseExUnaryOp(parent)
     
+    return unaryOpNode
   }
 }
 

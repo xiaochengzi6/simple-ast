@@ -1,4 +1,3 @@
-// 一元操作符
 import ManageNode from './../../ManageNode.js'
 import ParserKeywords from './../ParserKeywords.js'
 
@@ -21,7 +20,7 @@ class ExUnaryOp extends ParserKeywords{
    * @param {*} parent 
    */
   parseExUnaryOp(parent) {
-    const node = new ManageNode(parent)
+    const node = new ManageNode(parent, this.getToken())
     const { prefix, value, isUpdate, postfix } = this.getToken()
     if (prefix) {
       node.operator = value
@@ -49,7 +48,7 @@ class ExUnaryOp extends ParserKeywords{
     let resultNode = this.parseExSubscript(resultKeyword)
     
     if (postfix) {
-      const node = new ManageNode(parent)
+      const node = new ManageNode(parent, this.getToken())
       node.operator = resultNode 
       node.prefix = false 
       node.argument = resultNode

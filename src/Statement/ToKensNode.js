@@ -1,3 +1,5 @@
+import { SemiSymbol } from "../../utils/index.js"
+
 /**
  * 处理 tokens 内容
  */
@@ -15,9 +17,9 @@ class TokensNode {
   }
 
   /*建立一个对象，将tokens的type赋值给它{type:token.type}*/
-  getTokenType(current = this.current) {
-    if (this.exit(current)) return false
-    const { type } = this.tokens[current]
+  getTokenType() {
+    if (this.exit(this.current)) return false
+    const { type } = this.tokens[this.current]
 
     return type
   }
@@ -42,18 +44,29 @@ class TokensNode {
     const current = ++this.current
     if (this.exit(current)) return false
 
-    return this.tokens[current]
+    const { type, blank } = this.tokens[current]
+    
+    // ; 跳过
+    if (type === SemiSymbol) {
+      this.next()
+    }
+    // \n \t 这类的跳过
+    if (blank) {
+      this.next()
+    }
+
+    return true
   }
 
   test(type) {
     if (this.getTokenType() === type) {
       this.next()
-      return true 
-    }else{
-      return false 
+      return true
+    } else {
+      return false
     }
   }
-  
+
   /**
    * 判断下次的 token 的 type 与参数相同 是 next() 否 false 
    * @param {*} type 
@@ -82,9 +95,8 @@ class TokensNode {
   //如果token的type和传入的type相等，就进行next即current+2
   //否者将type传入SyntaxError函数，即进行报错
   expect(type) {
-
-    if (this.getTokenType === type) {
-      this.next()
+    if (this.getTokenType() === type) {
+      return this.next()
     }
 
     // todo 

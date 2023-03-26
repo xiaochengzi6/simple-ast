@@ -30,7 +30,7 @@ class ExKeyWords extends ExUnaryOp{
   }
 
   parseExKeyWords(parent) {
-    const node = new ManageNode(parent)
+    const node = new ManageNode(parent, this.getToken())
     const { type, value } = this.getToken()
 
     switch (type) {
@@ -46,8 +46,10 @@ class ExKeyWords extends ExUnaryOp{
       case NUMBERSTATEMENT:
       case STRINGSTATEMENT:
       case REGESTATEMENT:
-        node.value = tokVal
+        node.value = value
+        // 这里是拿到他的范围
         node.raw = value
+
         this.next()
         return node.finish("Literal")
 

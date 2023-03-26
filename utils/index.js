@@ -12,6 +12,7 @@ const _Equal = '61'
 const _DotSymbol = '46'
 const _QUestion = '63'
 const _Colon = '58'
+const _Semi = '59'
 
 export const LetterCode = {
   // a -z code: 97 -> 122
@@ -442,7 +443,7 @@ export const EqualSignSymbol = PunctuationType[_Equal].type
 export const DotSymbol = PunctuationType[_DotSymbol].type
 export const Question = PunctuationType[_QUestion].type
 export const ColonSymbol = PunctuationType[_Colon].type
-
+export const SemiSymbol = PunctuationType[_Semi].type
 
 let tokenizerTypeName = {
   "IdentifierStatement": {

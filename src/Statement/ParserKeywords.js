@@ -6,7 +6,8 @@ import {
   ParentRight,
   BlockLeft,
   BlockRight,
-  EqualSignSymbol
+  EqualSignSymbol,
+  ColonSymbol
 } from './../../utils/index.js';
 
 
@@ -16,12 +17,57 @@ class ParserKeywords extends TokensNode {
     super(tokens)
   }
 
+  walk() {
+    const token = this.getToken()
+    const node = new ManageNode()
+    // todo 
+    // 这里可以做个判断 没有取到 token 会直接退出
+    if (this.exit()) { return }
+
+    const { type, value } = token
+
+    // 在这里去进行关键词判断
+    switch (value) {
+      case 'var':
+        this.next()
+        // todo 
+        // 这里可以对最终的 var 表达式看看是否存在 ; 如果没有
+        return this.parserVar(node)
+
+      case 'function':
+        this.next()
+        return this.parserFunction(node)
+
+      default:
+        if(this.getTokenType === "UnknownStatement"){
+          node.ERROR = "出现未知类型"
+          node.value = this.getTokenValue()
+          node.current = this.current
+          return node.finish("Error")
+        }
+        // -----------------------------------------------------
+        const result = this.parseExpression(node)
+        // 关于 labelStatement 更多内容
+        // https://segmentfault.com/a/1190000014127816
+        if (result && result.type === 'Identifier' && this.test(ColonSymbol)) {
+          node.body = this.walk()
+          node.label = result
+          return node.finish("LabeledStatement")
+        }
+      
+        else {
+          node.expression = result
+          return node.finish("ExpressionStatement")
+        }
+    }
+  }
+
   parserVar(node) {
     node.declarations = []
     node.kind = "var"
 
     while (true) {
-      const childNode = new ManageNode(node)
+      const childNode = new ManageNode(node, this.getToken())
       childNode.id = this.parserIdentifier(childNode)
       // 这里对严格模式中的 var 也做了处理 
       // 比如：var 严格模式不能对 argument 和 eval 进行处理
@@ -31,7 +77,7 @@ class ParserKeywords extends TokensNode {
 
       childNode.init =
         this.test(EqualSignSymbol) ?
-          this.parseExUnaryOp(node) :
+          this.parseExpression(node) :
           null
 
       node.declarations.push(childNode.finish("VariableDeclaration"))
@@ -44,7 +90,7 @@ class ParserKeywords extends TokensNode {
   }
 
   parserIdentifier(parentNode) {
-    const node = new ManageNode(parentNode)
+    const node = new ManageNode(parentNode, this.getToken())
     node.name = this.getTokenValue()
 
     this.next()
@@ -52,12 +98,15 @@ class ParserKeywords extends TokensNode {
   }
 
   parserFunction(node) {
+    // 先暂时这样处理 还有一种情况是 var a = function (){} 没有 id 
+    // 这里先暂时不处理
     node.id = this.parserIdentifier(node)
     node.params = []
 
     const first = true
-
+    console.log(this.getTokenType(), ParentLeft)
     this.expect(ParentLeft)
+
     while (!this.test(ParentRight)) {
       !first
         ? this.expect(Comma)
@@ -74,22 +123,24 @@ class ParserKeywords extends TokensNode {
   }
 
   parserBlock(parent) {
-    const node = new ManageNode(parent)
+    const node = new ManageNode(parent, this.getToken())
     node.body = []
     this.expect(BlockLeft)
 
-    while (!tokens.test(BlockRight)) {
+    while (!this.test(BlockRight)) {
       // todo 难点：***
       // 这里对一些严格模式进行一些处理
 
-      // 这里调用语法规则
-      const statement = this.parserExpression()
+      // 从头开始
+      const statement = this.walk()
 
       node.body.push(statement)
     }
 
     return node.finish("BlockStatement")
   }
+
+
 }
 
 export default ParserKeywords

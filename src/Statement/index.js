@@ -1,7 +1,7 @@
-import { ParseExpression } from "./expression"
+import Ex from "./expression/index.js"
 
 function Deal(tokens){
-  const statement = new ParseExpression(tokens)
+  const statement = new Ex(tokens)
 
   return statement 
 }

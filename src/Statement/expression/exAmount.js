@@ -1,5 +1,5 @@
 import ManageNode from '../../ManageNode.js'
-import ExTernaryOperation from './exTernaryOperations';
+import ExTernaryOperation from './exTernaryOperations.js'
 
 
 /**
@@ -15,7 +15,7 @@ class ExAmount extends ExTernaryOperation {
     const { before, value } = this.getToken()
 
     if (before) {
-      const node = new ManageNode(result)
+      const node = new ManageNode(result, this.getToken())
       node.operator = value
       node.left = result 
       this.next()

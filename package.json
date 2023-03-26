@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "license": "MIT",
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "stringify-object": "^5.0.0"
+  }
 }
