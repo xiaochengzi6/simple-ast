@@ -9,19 +9,19 @@ import {
   ColonSymbol,
   Comma,
   IDENTIFIER,
-  KeywordType,
   NUMBERSTATEMENT,
   ParentLeft,
   REGESTATEMENT,
-  STRINGSTATEMENT
+  STRINGSTATEMENT,
+  _This,
+  _Null,
+  _True,
+  _False,
+  _Function,
+  _New
 } from './../../../utils/index.js'
 
-const This = KeywordType["this"]
-const Null = KeywordType['null']
-const True = KeywordType['true']
-const False = KeywordType['false']
-const Function = KeywordType['function']
-const New = KeywordType['new']
+
 
 /**
  * 关键词处理
@@ -37,7 +37,7 @@ class ExKeyWords extends ExUnaryOp {
 
     switch (type) {
       // this 
-      case This:
+      case _This:
         return node.finish("ThisExpression")
 
       // 标识符
@@ -83,22 +83,30 @@ class ExKeyWords extends ExUnaryOp {
 
         return node.finish("ArrayExpression")
 
-      case Function:
+      case _Function:
         this.next()
         return this.parserFunction(parent)
 
-      case New:
+      case _New:
         // todo
         return
 
-      case Null:
-      case False:
-      case True:
+      case _Null:
+      case _False:
+      case _True:
+        const node = new ManageNode(parent)
+        node.value = this.getTokenValue()
         // todo
-        return
+        // 这里保持和例子 https://astexplorer.net/ 相同就行
+        // demo: var a = true 
+        node.raw = value
+        this.next()
+     
+        return node.finish("Literal")
 
       default:
         // todo 
+        console.log("EX_KEYWORD: 不应该出现这种问题")
         return
     }
   }

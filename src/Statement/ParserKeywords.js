@@ -1,5 +1,5 @@
-import ManageNode from "../ManageNode.js";
-import TokensNode from './ToKensNode.js';
+import ManageNode from "../ManageNode.js"
+import TokensNode from './ToKensNode.js'
 import {
   ParentLeft,
   Comma,
@@ -10,8 +10,9 @@ import {
   ColonSymbol,
   _Else,
   _Catch,
-  _Finally
-} from './../../utils/index.js';
+  _Finally,
+  SemiSymbol
+} from './../../utils/index.js'
 
 
 
@@ -33,7 +34,20 @@ class ParserKeywords extends TokensNode {
     switch (value) {
       case 'debugger':
         this.next()
+        this.parserSemi()
+
         return node.finish("DebuggerStatement")
+
+      case 'break':
+      case 'continue':
+        const isBreak = this.getTokenValue() === 'break'
+        this.next()
+
+        if (this.test(SemiSymbol)) {
+          node.label = null
+        }
+
+        return node.finish(isBreak ? "BreakStatement" : "ContinueStatement")
 
       case 'if':
         this.next()
@@ -90,6 +104,7 @@ class ParserKeywords extends TokensNode {
         // todo
         // 这里可以测试有没有换行  存在换行就抛错
         node.argument = this.parseExpression()
+        this.parserSemi()
         return node.finish("ThrowStatement")
 
       case 'return':
@@ -97,10 +112,11 @@ class ParserKeywords extends TokensNode {
         // 这里要实现当前 token 是否在函数体内 不然就会抛错
 
         this.next()
-        if (this.nextTest(BlockRight)) {
+        if (this.test(semi)) {
           node.argument = null
         } else {
           node.argument = this.parseExpression()
+          this.parserSemi()
         }
 
         return node.finish("ReturnStatement")
@@ -108,15 +124,20 @@ class ParserKeywords extends TokensNode {
       case 'for':
         this.next()
         this.expect(ParentLeft)
+        if(this.getTokenType === SemiSymbol) return parseFor(node)
+
         // ';'有意义 不能随意跳过，这里要做对 ; 的处理
         return
       case ';':
+        // ; 字符 有意义 用在 for 阶段 不可忽视
+        next()
+        return node.finish(EmptyStatement)
 
-        return
       case 'var':
         this.next()
         // todo 
         // 这里可以对最终的 var 表达式看看是否存在 ; 如果没有
+        this.parserSemi()
         return this.parserVar(node)
 
       case 'function':
@@ -133,6 +154,7 @@ class ParserKeywords extends TokensNode {
           node.current = this.current
           return node.finish("Error")
         }
+
         // -----------------------------------------------------
         const result = this.parseExpression(node)
         // 关于 labelStatement 更多内容
@@ -145,6 +167,7 @@ class ParserKeywords extends TokensNode {
 
         else {
           node.expression = result
+          this.parserSemi()
           return node.finish("ExpressionStatement")
         }
     }
@@ -231,11 +254,20 @@ class ParserKeywords extends TokensNode {
   parserParent(parent) {
     this.expect(ParentLeft)
     const node = this.parseExpression(parent)
+    console.log(this.getTokenType())
     this.expect(ParentRight)
 
     return node
   }
 
+  parserSemi() {
+    this.test(SemiSymbol)
+  }
+
+  parseFor(node, init){
+    node.init = init 
+    this.expect(SemiSymbol)
+  }
 }
 
 export default ParserKeywords

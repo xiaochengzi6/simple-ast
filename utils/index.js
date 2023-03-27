@@ -454,7 +454,12 @@ export const SemiSymbol = PunctuationType[_Semi].type
 export const _Else = KeywordType[_ElseValue].type 
 export const _Catch = KeywordType[_CatchValue].type
 export const _Finally = KeywordType[_FinallyValue].type
-
+export const _This = KeywordType["this"].type 
+export const _Null = KeywordType['null'].type 
+export const _True = KeywordType['true'].type
+export const _False = KeywordType['false'].type 
+export const _Function = KeywordType['function'].type 
+export const _New = KeywordType['new'].type 
 
 let tokenizerTypeName = {
   "IdentifierStatement": {

@@ -2,10 +2,9 @@ import parser from "../src/parser.js"
 import tokenizer from "../src/tokenizer.js"
 import stringifyObject from 'stringify-object'
 
-const target = `try{
-  var a = 1
-}catch(e){
-  var b = 2
+const target = `while(true){
+  function a () {}
+  break
 }
 `
 

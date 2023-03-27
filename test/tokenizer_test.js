@@ -1,6 +1,9 @@
 import tokenizer from "../src/tokenizer.js"
 
-const value = 'function a (){}'
+const value = `while(true){
+  function a () {}
+  break
+}`
 const token = tokenizer(value)
 
 console.log(token)
