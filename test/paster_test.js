@@ -2,9 +2,10 @@ import parser from "../src/parser.js"
 import tokenizer from "../src/tokenizer.js"
 import stringifyObject from 'stringify-object'
 
-const target = `while(true){
-  function a () {}
-  break
+const target = `
+switch(a){
+  case "a": 
+    break 
 }
 `
 

@@ -460,6 +460,12 @@ export const _True = KeywordType['true'].type
 export const _False = KeywordType['false'].type 
 export const _Function = KeywordType['function'].type 
 export const _New = KeywordType['new'].type 
+export const _Var = KeywordType['var'].type
+export const _In = KeywordType['in'].type
+export const _Case = KeywordType['case'].type
+export const _Default = KeywordType['default'].type
+export const _While = KeywordType['while'].type
+
 
 let tokenizerTypeName = {
   "IdentifierStatement": {

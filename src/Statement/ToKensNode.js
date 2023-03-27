@@ -8,7 +8,19 @@ class TokensNode {
     this.tokens = tokens
     this.length = tokens.length
     this.current = 0
+
+    // 初始化处理
+    this.init()
   }
+
+  init() {
+    // 如果 token 第一个是 \n 这种形式的就会北调过
+    const { blank } = this.tokens[0]
+    if (blank) {
+      this.next()
+    }
+  }
+
   //如果tokens结束,返回false否者返回本次tokens的值
   getToken(current = this.current) {
     if (this.exit(current)) return false
@@ -27,9 +39,9 @@ class TokensNode {
   //返回tokens的kewyord和value
   /*value,keyword值为{value:tokens.value,keyword:tokens.keyword}*/
   // 如果 token 中没有 value 就返回 keyword
-  getTokenValue(current = this.current) {
-    if (this.exit(current)) return false
-    const { value, keyword } = this.tokens[current]
+  getTokenValue() {
+    if (this.exit(this.current)) return false
+    const { value, keyword } = this.tokens[this.current]
 
     return value || keyword
   }
@@ -45,12 +57,12 @@ class TokensNode {
     if (this.exit(current)) return false
 
     const { type, blank } = this.tokens[current]
-    
+
     // ; 跳过
     // 但不知道跳过后会有什么问题
-    if (type === SemiSymbol) {
-      this.next()
-    }
+    // if (type === SemiSymbol) {
+    //   this.next()
+    // }
     // \n \t 这类的跳过
     if (blank) {
       this.next()

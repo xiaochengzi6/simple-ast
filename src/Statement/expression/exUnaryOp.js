@@ -1,7 +1,7 @@
 import ManageNode from './../../ManageNode.js'
 import ParserKeywords from './../ParserKeywords.js'
 
-class ExUnaryOp extends ParserKeywords{
+class ExUnaryOp extends ParserKeywords {
   constructor(tokens) {
     super(tokens)
   }
@@ -21,7 +21,7 @@ class ExUnaryOp extends ParserKeywords{
    */
   parseExUnaryOp(parent) {
     const node = new ManageNode(parent, this.getToken())
-    const { prefix, value, isUpdate, postfix } = this.getToken()
+    const { prefix, value, isUpdate } = this.getToken()
     if (prefix) {
       node.operator = value
       node.prefix = true
@@ -46,11 +46,13 @@ class ExUnaryOp extends ParserKeywords{
     const resultKeyword = this.parseExKeyWords(prefix ? node : parent)
     // 处理下标
     let resultNode = this.parseExSubscript(resultKeyword)
-    
+
+    // 获取最新 token 的postfix
+    const { postfix } = this.getToken()
     if (postfix) {
       const node = new ManageNode(parent, this.getToken())
-      node.operator = resultNode 
-      node.prefix = false 
+      node.operator = resultNode
+      node.prefix = false
       node.argument = resultNode
 
       // todo 
@@ -61,7 +63,7 @@ class ExUnaryOp extends ParserKeywords{
       resultNode = node.finish("UpdateExpression")
     }
 
-    return resultNode 
+    return resultNode
   }
 }
 

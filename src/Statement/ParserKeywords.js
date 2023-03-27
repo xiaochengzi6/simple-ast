@@ -11,7 +11,12 @@ import {
   _Else,
   _Catch,
   _Finally,
-  SemiSymbol
+  SemiSymbol,
+  _Var,
+  _In,
+  _Case,
+  _Default,
+  _While
 } from './../../utils/index.js'
 
 
@@ -62,23 +67,25 @@ class ParserKeywords extends TokensNode {
         this.next()
         node.object = this.parserParent(node)
         node.body = this.walk()
+
         return node.finish("WithStatement")
 
       case 'while':
         this.next()
         node.test = this.parserParent(node)
         node.body = this.walk()
+
         return node.finish("WhileStatement")
 
       case 'try':
         this.next()
         node.block = this.parserBlock()
         node.handlers = []
-        console.log(this.getTokenType())
+
         while (this.getTokenType() === _Catch) {
           const childNode = new ManageNode(node)
           this.next()
-          console.log(this.getTokenType() === ParentLeft)
+          // 这里调用 expect 会向下走一行
           // this.expect(ParentLeft)
           childNode.param = this.parserParent()
           //  todo 
@@ -92,7 +99,6 @@ class ParserKeywords extends TokensNode {
         node.finalizer = this.test(_Finally) ? this.parserBlock() : null
 
         if (!node.handlers.length && !node.finalizer) {
-          console.log(JSON.stringify(node))
           // 抛错
           throw SyntaxError("必须要有 catch or finally")
         }
@@ -112,7 +118,7 @@ class ParserKeywords extends TokensNode {
         // 这里要实现当前 token 是否在函数体内 不然就会抛错
 
         this.next()
-        if (this.test(semi)) {
+        if (this.test(SemiSymbol)) {
           node.argument = null
         } else {
           node.argument = this.parseExpression()
@@ -124,10 +130,81 @@ class ParserKeywords extends TokensNode {
       case 'for':
         this.next()
         this.expect(ParentLeft)
-        if(this.getTokenType === SemiSymbol) return parseFor(node)
+        if (this.getTokenType() === SemiSymbol) return parserFor(node)
+        // todo 
+        // 这里是判断  for(var i = 2) 这类东西
+        // 但 es6 可以使用 let 或者 const 这类东西
+        // 目前先做 es5 
+        if (this.getTokenType() === _Var) {
+          const childNode = new ManageNode()
+          this.next()
+          this.parserVar(childNode)
+          // this.parserSemi()
+          if (childNode.declarations.length === 1 && this.test(_In)) {
+            return this.parserForIn(node, childNode)
+          }
+          return this.parserFor(node, childNode)
+        }
+        const childNode = this.parseExpression()
+        if (this.test(_In)) {
+          // todo
+          // 这里对 In 后的 indentifier 做判断是否合法
+          return this.parserForIn(node, childNode)
+        }
 
-        // ';'有意义 不能随意跳过，这里要做对 ; 的处理
-        return
+        return this.parserFor(node, childNode)
+
+      case 'switch':
+        this.next()
+        node.discriminant = this.parserParent()
+        node.cases = []
+        this.expect(BlockLeft)
+
+        let caseNode
+        while (!this.test(BlockRight)) {
+          if (this.getTokenType() === (_Case || _Default)) {
+            let isCase = this.getTokenType() === _Case
+            if (caseNode) {
+              caseNode.finish("SwitchCase")
+            }
+            // 添加 case 
+            node.cases.push(caseNode = new ManageNode())
+            // case 执行内容
+            caseNode.consequent = []
+            this.next()
+
+            if (isCase) {
+              // case 判断条件
+              caseNode.test = this.parseExpression()
+            } else {
+              // todo
+              // 判断是否出现多个 default 
+              caseNode.test = null
+            }
+
+            // 判断 case 或者 default 种不能出现 * 符号
+            this.expect(ColonSymbol)
+          } else {
+            caseNode.consequent.push(this.walk())
+          }
+        }
+
+        if (caseNode) {
+          caseNode.finish("SwitchCase")
+        }
+        this.next()
+
+        return node.finish("SwitchStatement")
+
+      case 'do':
+        this.next()
+        node.body = this.walk()
+        this.expect(_While)
+        node.test = this.parserParent()
+        this.parserSemi()
+
+        return node.finish("DoWhileStatement")
+
       case ';':
         // ; 字符 有意义 用在 for 阶段 不可忽视
         next()
@@ -264,9 +341,28 @@ class ParserKeywords extends TokensNode {
     this.test(SemiSymbol)
   }
 
-  parseFor(node, init){
-    node.init = init 
+  parserFor(node, childNode) {
+    node.init = childNode
+    console.log(this.getTokenType(), this.getTokenValue())
     this.expect(SemiSymbol)
+    node.test = this.getTokenType() === SemiSymbol ? null : this.parseExpression()
+    console.log(this.getTokenType(), this.getTokenValue())
+    this.expect(SemiSymbol)
+    node.update = this.getTokenType() === ParentRight ? null : this.parseExpression()
+    console.log(this.getTokenType(), this.getTokenValue())
+    this.expect(ParentRight)
+    node.body = this.walk()
+
+    return node.finish("ForStatement")
+  }
+
+  parserForIn(node, childNode) {
+    node.left = childNode
+    node.right = this.parseExpression()
+    this.expect(ParentRight)
+    node.body = this.walk()
+
+    return node.finish("ForInStatement")
   }
 }
 

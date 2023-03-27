@@ -196,10 +196,13 @@ function tokenizer(input) {
 
     // > or <
     if (char === (60 || 62)) {
-      const result = matheOperation(char)
+      const { type, value } = getPunctuation(char)
       current++
-
-      return result
+      return tokens.push({
+        type,
+        value,
+        grad: 8
+      })
     }
 
     // != 
@@ -321,7 +324,7 @@ function tokenizer(input) {
           type: 'TabulationStatement',
           // 制表符号默认 4 空格
           value: '    ',
-           blank: true
+          blank: true
         }
         break
       case '\v':
@@ -390,7 +393,7 @@ function matheOperation(char) {
     return {
       type,
       value,
-      grade: 9
+      grad: 9
     }
   }
   // * or /
@@ -399,14 +402,6 @@ function matheOperation(char) {
       type,
       value,
       grad: 10
-    }
-  }
-  // > or <
-  else if (char === (60 || 62)) {
-    return {
-      type,
-      value,
-      grad: 8
     }
   }
   else {

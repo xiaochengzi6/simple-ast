@@ -1,6 +1,5 @@
 import ManageNode from './../../ManageNode.js'
 import ExUnaryOp from './exUnaryOp.js'
-
 import {
   ArrayLeft,
   ArrayRight,
@@ -32,7 +31,8 @@ class ExKeyWords extends ExUnaryOp {
   }
 
   parseExKeyWords(parent) {
-    const node = new ManageNode(parent, this.getToken())
+    const node = new ManageNode(parent)
+
     const { type, value } = this.getToken()
 
     switch (type) {
@@ -94,7 +94,6 @@ class ExKeyWords extends ExUnaryOp {
       case _Null:
       case _False:
       case _True:
-        const node = new ManageNode(parent)
         node.value = this.getTokenValue()
         // todo
         // 这里保持和例子 https://astexplorer.net/ 相同就行
@@ -106,7 +105,7 @@ class ExKeyWords extends ExUnaryOp {
 
       default:
         // todo 
-        console.log("EX_KEYWORD: 不应该出现这种问题")
+        console.log("EX_KEYWORD: 不应该出现这种问题", this.getToken())
         return
     }
   }
