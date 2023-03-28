@@ -18,16 +18,17 @@ import {
   _Default,
   _While
 } from './../../utils/index.js'
-
-
+import rangeMap from "./rangeMap.js"
 
 class ParserKeywords extends TokensNode {
   constructor(tokens) {
     super(tokens)
   }
 
-  walk() {
+  walk(isKey) {
     const token = this.getToken()
+    // todo
+    // 这里要对它的长度单独处理
     const node = new ManageNode()
     // todo 
     // 这里可以做个判断 没有取到 token 会直接退出
@@ -57,7 +58,7 @@ class ParserKeywords extends TokensNode {
       case 'if':
         this.next()
         // 处理 括号
-        node.test = this.parserParent(node)
+        node.test = this.parserParent()
         node.consequent = this.walk()
         node.alternate = this.test(_Else) ? this.walk() : null
 
@@ -83,7 +84,7 @@ class ParserKeywords extends TokensNode {
         node.handlers = []
 
         while (this.getTokenType() === _Catch) {
-          const childNode = new ManageNode(node)
+          const childNode = new ManageNode()
           this.next()
           // 这里调用 expect 会向下走一行
           // this.expect(ParentLeft)
@@ -214,8 +215,10 @@ class ParserKeywords extends TokensNode {
         this.next()
         // todo 
         // 这里可以对最终的 var 表达式看看是否存在 ; 如果没有
+        const _varNode = this.parserVar(node)
         this.parserSemi()
-        return this.parserVar(node)
+
+        return _varNode
 
       case 'function':
         this.next()
@@ -255,8 +258,8 @@ class ParserKeywords extends TokensNode {
     node.kind = "var"
 
     while (true) {
-      const childNode = new ManageNode(node, this.getToken())
-      childNode.id = this.parserIdentifier(childNode)
+      const childNode = new ManageNode()
+      childNode.id = this.parserIdentifier()
       // 这里对严格模式中的 var 也做了处理 
       // 比如：var 严格模式不能对 argument 和 eval 进行处理
 
@@ -265,7 +268,7 @@ class ParserKeywords extends TokensNode {
 
       childNode.init =
         this.test(EqualSignSymbol) ?
-          this.parseExpression(node) :
+          this.parseExpression() :
           null
 
       node.declarations.push(childNode.finish("VariableDeclaration"))
@@ -277,8 +280,8 @@ class ParserKeywords extends TokensNode {
     return node.finish("VariableDeclaration")
   }
 
-  parserIdentifier(parentNode) {
-    const node = new ManageNode(parentNode, this.getToken())
+  parserIdentifier() {
+    const node = new ManageNode()
     node.name = this.getTokenValue()
 
     this.next()
@@ -288,21 +291,23 @@ class ParserKeywords extends TokensNode {
   parserFunction(node) {
     // 先暂时这样处理 还有一种情况是 var a = function (){} 没有 id 
     // 这里先暂时不处理
-    node.id = this.parserIdentifier(node)
+    node.id = this.parserIdentifier()
     node.params = []
 
-    const first = true
-    console.log(this.getTokenType(), ParentLeft)
+    let first = true
+
     this.expect(ParentLeft)
 
     while (!this.test(ParentRight)) {
-      !first
-        ? this.expect(Comma)
-        : first = false
+      if (!first) {
+        this.expect(Comma)
+      } else {
+        first = false
+      }
 
-      node.params.push(this.parserIdentifier(node))
+      node.params.push(this.parserIdentifier())
     }
-    node.body = this.parserBlock(node)
+    node.body = this.parserBlock()
 
 
     // todo
@@ -310,8 +315,8 @@ class ParserKeywords extends TokensNode {
     return node.finish("FunctionDeclaration")
   }
 
-  parserBlock(parent) {
-    const node = new ManageNode(parent, this.getToken())
+  parserBlock() {
+    const node = new ManageNode()
     node.body = []
     this.expect(BlockLeft)
 
@@ -328,12 +333,12 @@ class ParserKeywords extends TokensNode {
     return node.finish("BlockStatement")
   }
 
-  parserParent(parent) {
+  parserParent() {
     this.expect(ParentLeft)
-    const node = this.parseExpression(parent)
-    console.log(this.getTokenType())
+    const node = this.parseExpression()
+    rangeMap.log()
     this.expect(ParentRight)
-
+    rangeMap.log()
     return node
   }
 
@@ -343,13 +348,13 @@ class ParserKeywords extends TokensNode {
 
   parserFor(node, childNode) {
     node.init = childNode
-    console.log(this.getTokenType(), this.getTokenValue())
+
     this.expect(SemiSymbol)
     node.test = this.getTokenType() === SemiSymbol ? null : this.parseExpression()
-    console.log(this.getTokenType(), this.getTokenValue())
+
     this.expect(SemiSymbol)
     node.update = this.getTokenType() === ParentRight ? null : this.parseExpression()
-    console.log(this.getTokenType(), this.getTokenValue())
+
     this.expect(ParentRight)
     node.body = this.walk()
 

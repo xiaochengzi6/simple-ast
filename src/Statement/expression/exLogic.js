@@ -12,8 +12,8 @@ class ExLogic extends ExSubscript {
     super(tokens)
   }
 
-  parseExLogic(parent) {
-    const unaryOpNode = this.parseExUnaryOp(parent)
+  parseExLogic() {
+    const unaryOpNode = this.parseExUnaryOp()
 
     return this.logic(unaryOpNode, -1)
   }

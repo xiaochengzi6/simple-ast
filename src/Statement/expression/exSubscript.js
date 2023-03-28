@@ -13,7 +13,7 @@ class ExSubscript extends ExKeyWords {
 
   parseExSubscript(parent) {
     if (this.test(DotSymbol)) {
-      const node = ManageNode(parent, this.getToken())
+      const node = ManageNode(this.setRange())
       node.object = parent
       node.property = this.parserIdentifier(node)
       node.computed = false
@@ -21,7 +21,7 @@ class ExSubscript extends ExKeyWords {
       return this.parseExSubscript(node.finish("MemberExpression"))
     }
     else if (this.test(ArrayLeft)) {
-      const node = ManageNode(parent, this.getToken())
+      const node = ManageNode(this.setRange())
       node.object = parent
       node.property = this.parseExUnaryOp(node)
       node.computed = true
@@ -30,7 +30,7 @@ class ExSubscript extends ExKeyWords {
       return this.parseExSubscript(node.finish("MemberExpression"))
     }
     else if (this.test(ParentLeft)) {
-      const node = ManageNode(parent, this.getToken())
+      const node = ManageNode(this.setRange())
       node.callee = parent
 
       let arr = [], first = true

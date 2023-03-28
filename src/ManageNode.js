@@ -1,24 +1,17 @@
+import rangeMap from "./Statement/rangeMap.js"
 
 /**
  * 管理 tokens 
  */
 class ManageNode {
-  static parentNode
+  static isKey
+  constructor(isKey) {
+    ManageNode.isKey = isKey
 
-  constructor(parentNode, token) {
-    let end = 0
-
-    if (parentNode && parentNode.end != null) {
-      end = parentNode.end + 1
+    if (!isKey) {
+      this.key = Math.random().toString(32).slice(2)
+      rangeMap.keys.push(this.key)
     }
-    this.start = end
-
-    if (token && typeof token === 'object') {
-      const { value } = token
-      this.end = value.length
-    }
-
-    ManageNode.parentNode = parentNode
   }
 
   /**
@@ -29,11 +22,16 @@ class ManageNode {
   finish(type) {
     this.type = type
 
-    // todo 难度: *****
-    // 在调用 finish 时候说明数据处理完全，可以处理 end 
-    // this.end = 
-    // value name kind 
-    this.setEnd()
+    if (ManageNode.isKey) return
+
+    const obj = rangeMap.calc(this.key)
+
+    if (obj && typeof obj === 'object') {
+      const { start, end } = obj
+      this.start = start
+      this.end = end
+    }
+
     return this
   }
 
@@ -52,24 +50,28 @@ class ManageNode {
     }
   }
 
-  setEnd() {
-    if (this.end) return
+  /**
+   * 根据规则计算自身范围
+   * 
+   * 计算 range 算法：
+   * 1.0.0 遍历当前 node
+   *   1.1.0 寻找属性为 object 的元素 
+   *   1.1.1 找到该 object 的属性 {start, end}
+   *   1.1.2 比较
+   *   1.1.3 start 取最小 minStart， end 取最大 maxEnd
+   *   1.1.4 下一次遍历
+   *   1.2.0 没有找到
+   *     1.2.1 下一次遍历
+   *   1.3.0 遍历结束
+   * 
+   * 2.0.0 判断是否有属性为 object 
+   *   2.1.0 没有
+   *     2.1.1 直接返回
+   *   2.2.0 有 
+   *     2.2.1 设置当前 node {start: minStart, end: maxEnd}
+   */
+  calcRange() {
 
-    if (this.name && typeof this.name === 'string') {
-      return this.addEndLength(this.name)
-    }
-    if (this.value && typeof this.value === 'string') {
-      return this.addEndLength(this.value)
-    }
-    if (this.kind && typeof this.value === 'string') {
-      return this.addEndLength(this.kind)
-    }
-
-    console.log("LENGTHOUT: end 长度无法设置")
-  }
-
-  addEndLength(target) {
-    return this.end = this.start + target.length
   }
 }
 

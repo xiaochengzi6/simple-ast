@@ -1,10 +1,7 @@
 import tokenizer from "../src/tokenizer.js"
 
-const value = `for(var a = 1; a<2;a++){
-  function a () {}
-  break
-}
-`
-const token = tokenizer(value)
+const target = `function a (a, b){return a < b}`
 
-console.log(token)
+const tokens = tokenizer(target)
+
+console.log(tokens)

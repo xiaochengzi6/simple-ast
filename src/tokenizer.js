@@ -119,7 +119,7 @@ function tokenizer(input) {
     }
 
     // 一元操作符：处理 ++ -- 
-    if (char === (43 || 45)) {
+    if (char === 43 || char === 45) {
       const nextCurrent = current + 1
       const next = input[nextCurrent]
 
@@ -195,7 +195,7 @@ function tokenizer(input) {
     }
 
     // > or <
-    if (char === (60 || 62)) {
+    if (char === 60 || char === 62) {
       const { type, value } = getPunctuation(char)
       current++
       return tokens.push({
@@ -242,7 +242,8 @@ function tokenizer(input) {
         return tokens.push({
           type: "EqualStatement",
           value: "==",
-          before: true
+          before: true,
+          gard: 6
         })
       }
       // ===
@@ -251,7 +252,8 @@ function tokenizer(input) {
         return tokens.push({
           type: "CongruentStatement",
           value: "===",
-          before: true
+          before: true,
+          grad: 6
         })
       } else {
         throw SyntaxError("文件中语法错误")

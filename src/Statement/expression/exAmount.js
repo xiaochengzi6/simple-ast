@@ -10,16 +10,16 @@ class ExAmount extends ExTernaryOperation {
     super(tokens)
   }
 
-  parseAmount(parent) {
-    const result = this.parseTernaryOperations(parent)
+  parseAmount() {
+    const result = this.parseTernaryOperations()
     const { before, value } = this.getToken()
 
     if (before) {
-      const node = new ManageNode(result, this.getToken())
+      const node = new ManageNode()
       node.operator = value
       node.left = result 
       this.next()
-      node.right = this.parseAmount(node)
+      node.right = this.parseAmount()
 
       return node.finish("AssignmentExpression")
     }

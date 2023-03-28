@@ -30,8 +30,8 @@ class ExKeyWords extends ExUnaryOp {
     super(tokens)
   }
 
-  parseExKeyWords(parent) {
-    const node = new ManageNode(parent)
+  parseExKeyWords() {
+    const node = new ManageNode()
 
     const { type, value } = this.getToken()
 
@@ -42,7 +42,7 @@ class ExKeyWords extends ExUnaryOp {
 
       // 标识符
       case IDENTIFIER:
-        return this.parserIdentifier(parent)
+        return this.parserIdentifier()
 
       // number || string || reg
       case NUMBERSTATEMENT:
@@ -58,7 +58,7 @@ class ExKeyWords extends ExUnaryOp {
       // 括号
       case ParentLeft:
         this.next()
-        return this.parseExUnaryOp(parent)
+        return this.parseExUnaryOp()
 
       // 对象
       case BlockLeft:
@@ -110,8 +110,8 @@ class ExKeyWords extends ExUnaryOp {
     }
   }
 
-  parseObj(parent) {
-    const node = new ManageNode(parent)
+  parseObj() {
+    const node = new ManageNode()
     let first = true
     node.properties = []
     this.next()

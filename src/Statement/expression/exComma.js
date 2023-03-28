@@ -8,10 +8,10 @@ class ExComma extends ExAmount {
     super(tokens)
   }
 
-  parseComma(parent){
-    const result = this.parseAmount(parent)
+  parseComma(){
+    const result = this.parseAmount()
     if(this.test(Comma)){
-      const node = new ManageNode(parent, this.getToken())
+      const node = new ManageNode()
       node.expressions = [result] 
       while(!this.test(Comma)){
         node.expressions.push(this.parseAmount(node))

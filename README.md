@@ -158,3 +158,93 @@ switch(type){
     5.2.2 while(type !== ",")
       5.2.2.1 node.expressions.push(1.0.0)
   5.3.0 return 4.0.0 Result 
+
+
+### range 计算规则
+
+~~~js
+// if
+node: {
+  body:[
+    {
+      expression: {
+        left: {start, end},
+        right: {start, end}
+      }
+    }
+  ]
+}
+// var 
+node: {
+  body: [
+    {
+      declarations: [
+        {
+          id: {start, end},
+          init: {start, end}
+        }
+      ]
+    }
+  ]
+}
+
+// for 
+node: {
+  body: [
+    {
+      init: {
+        declarations: [
+          {
+            id: {start, end},
+            init: {start, end}
+          }
+        ]
+      },
+      test: {
+        operator: {start, end},
+        argument: {start, end},
+      },
+      body: []
+    }
+  ]
+}
+
+// function   
+node: {
+  body: [
+    {
+      id: {start, end},
+      params: [
+        {start, end},
+        {start, end}
+      ],
+      body: [{
+        body:[{
+          argument: {
+            let: {
+              right: {}
+            }
+          }
+        }]
+      }]
+    }
+  ]
+}
+~~~
+创建 node 可能存在前后不一致的情况但 每次node 处理完成之后的 `finish` 绝对是按照顺序完成的 先子 node 后 父 node 按照这样的方式只需要层 node 处理好自身的 start, end 就行
+具体算法流程 
+1.0.0 遍历当前 node
+  1.1.0 寻找属性为 object 的元素 
+    1.1.1 找到该 object 的属性 {start, end}
+    1.1.2 比较
+    1.1.3 start 取最小 minStart， end 取最大 maxEnd
+    1.1.4 下一次遍历
+  1.2.0 没有找到
+    1.2.1 下一次遍历
+  1.3.0 遍历结束
+2.0.0 判断是否有属性为 object 
+  2.1.0 没有
+    2.1.1 直接返回
+  2.2.0 有 
+    2.2.1 设置当前 node {start: minStart, end: maxEnd}
+  

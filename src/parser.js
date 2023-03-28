@@ -9,7 +9,7 @@ import Deal from "./Statement/index.js"
 function parser(tokens) {
   const deal = Deal(tokens)
 
-  const rootNode = new ManageNode()
+  const rootNode = new ManageNode(true)
   rootNode.type = "Program"
   rootNode.body = []
 

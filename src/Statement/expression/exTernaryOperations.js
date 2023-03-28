@@ -10,17 +10,17 @@ class ExTernaryOperation extends ExLogic {
     super(tokens)
   }
 
-  parseTernaryOperations(parent) {
-    const logicValue = this.parseExLogic(parent)
+  parseTernaryOperations() {
+    const logicValue = this.parseExLogic()
 
     if (this.test(Question)) {
-      const node = new ManageNode(logicValue, this.getToken())
+      const node = new ManageNode()
       node.test = logicValue
-      node.consequent = this.parseExUnaryOp(node)
+      node.consequent = this.parseExUnaryOp()
 
       this.expect(ColonSymbol)
 
-      node.alternate = this.parseExUnaryOp(node)
+      node.alternate = this.parseExUnaryOp()
       return node.finish("ConditionalExpression")
     }
 

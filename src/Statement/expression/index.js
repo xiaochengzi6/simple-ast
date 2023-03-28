@@ -5,8 +5,8 @@ class Ex extends ExComma{
     super(tokens)
   }
 
-  parseExpression(parent){
-    return this.parseComma(parent)
+  parseExpression(){
+    return this.parseComma()
   }
 }
 
