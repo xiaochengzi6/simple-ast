@@ -52,7 +52,6 @@ class ExKeyWords extends ExUnaryOp {
         // 这里是拿到他的范围
         node.raw = value
         const numberStringRegNode = node.finish("Literal")
-        console.log("value:", numberStringRegNode)
         this.next()
         return numberStringRegNode
 

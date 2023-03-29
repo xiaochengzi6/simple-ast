@@ -173,6 +173,16 @@ class TokensNode {
     return false
   }
 
+    preCurrent(index){
+      let current = index || (this.current - 1)
+      const {blank} = this.tokens[current]
+
+      if(blank){
+        return this.preCurrent(--current)
+      }
+
+      return current
+    }
 
 }
 

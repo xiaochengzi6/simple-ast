@@ -14,32 +14,28 @@ class RangeMap {
     this.blockStart = 0
     this.blockEnd = 0
 
+    // 记录是否换行
     this.lint = 0
-    this.state = 0
+
   }
 
   add(tokenVal) {
     const length = tokenVal.length || 0
     const isSymbol = IsSymbol(getChatCode(tokenVal)) || (tokenVal === '\n')
-
-    if (tokenVal === '\n') {
-      this.lastEnd = this.end
-      this.lastStart = this.start
-      return this.lint += length 
-    }
+   
+    // if (this.lint > 0) {
+    //   this.lint += length
+    // }
+   
+    // if (tokenVal === '\n') {
+    //   this.lint += length
+    // }
 
     // 这里还需要更准确的判断才行
     // todo 
     // 很有可能在这里出现错误
     if (!isSymbol) {
-      if (this.lint > 0) {
-        this.start = this.lastStart
-        this.end = this.lastEnd 
-        this.state = this.lint
-        this.lint = 0
-        return
-      }
-      this.start = this.position + this.state
+      this.start = this.position
       this.end = this.start + length
       this.position = this.end
 
@@ -60,12 +56,8 @@ class RangeMap {
       this.blockIndex = this.blockEnd
     }
 
-    if (this.lint > 0) {
-       this.lint += length
-    } else {
-      this.position += length
-    }
-    // this.position += length
+
+    this.position += length
     this.blockIndex += length
   }
 

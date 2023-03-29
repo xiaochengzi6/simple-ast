@@ -21,7 +21,7 @@ class ManageNode {
 
     // ----set end-----
     if (type === 'BlockStatement') {
-      this.start = this.blockStart 
+      this.start = this.blockStart
       this.end = rangeMap.blockEnd
     } else {
       this.end = rangeMap.end
