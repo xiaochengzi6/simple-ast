@@ -51,9 +51,10 @@ class ExKeyWords extends ExUnaryOp {
         node.value = value
         // 这里是拿到他的范围
         node.raw = value
-
+        const numberStringRegNode = node.finish("Literal")
+        console.log("value:", numberStringRegNode)
         this.next()
-        return node.finish("Literal")
+        return numberStringRegNode
 
       // 括号
       case ParentLeft:
@@ -99,13 +100,18 @@ class ExKeyWords extends ExUnaryOp {
         // 这里保持和例子 https://astexplorer.net/ 相同就行
         // demo: var a = true 
         node.raw = value
+        const result_node = node.finish("Literal")
         this.next()
-     
-        return node.finish("Literal")
+        console.log("result_node", result_node)
+        return result_node
 
       default:
         // todo 
-        console.log("EX_KEYWORD: 不应该出现这种问题", this.getToken())
+        console.log(`EX_KEYWORD: 不应该出现这种问题
+        这种问题属于没有解析到合适的处理方法从而导致出现问题
+        为了体验感 但是程序并不会出现抛错 得到的 ast 树非常有可能不符合你的意愿
+        可以考虑提交 issue 到本仓库 (欢迎您!!!)
+        `, this.getToken())
         return
     }
   }

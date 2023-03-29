@@ -14,6 +14,7 @@ class TokensNode {
   }
 
   init() {
+    rangeMap.add(this.getTokenValue())
     const { blank } = this.tokens[0]
     if (blank) {
       this.next()
@@ -46,56 +47,32 @@ class TokensNode {
   }
 
   next() {
-    rangeMap.add(this.getTokenValue(), this.getTokenType())
+    rangeMap.lastStart = rangeMap.start
+    rangeMap.lastEnd = rangeMap.end
+
+    return this._next()
+  }
+
+  _next() {
 
     const current = ++this.current
 
+    rangeMap.add(this.getTokenValue())
     // 限制长度
     if (current >= this.length) {
-      // rangeMap.add(this.getTokenValue().length)
       return false
     }
 
     // 跳过 
-    const {blank} = this.getToken()
-  
-    if(blank) {
+    const { blank } = this.getToken()
+
+    if (blank) {
       return this.next()
-    } 
+    }
 
     return true
   }
 
-  old_next() {
-    // 处理 - 初次
-    if (this.first) {
-      // 跳过忽视的 token 
-      if (!this.skip(this.current)) {
-        rangeMap.add(this.getTokenValue().length)
-      }
-    }
-
-    const current = ++this.current
-
-    // 如果下一个 current > 当前的长度 就
-    if (current >= this.length) {
-      // 处理一下当前的 tokens 
-      rangeMap.add(this.getTokenValue().length)
-
-      return false
-    }
-
-    if (this.skip(current)) {
-      return
-    }
-
-
-    if (!this.first) rangeMap.add(this.getTokenValue().length)
-
-    this.first = false
-
-    return true
-  }
 
   test(type) {
     if (this.getTokenType() === type) {
@@ -134,7 +111,15 @@ class TokensNode {
 
     // todo 
     // 这里如果不对就要抛错 重写为函数
-    throw SyntaxError(`请仔细校验代码语法是否正确${type}`)
+    throw SyntaxError(`
+    请仔细校验代码语法是否正确
+    提示：语法正确但解析失败说明程序出现问题 
+          有可能是 bug 也有可能目前不支持该语法 
+          可以输入 es3 语法来简单测试该项目
+    如果你有想法
+    欢迎你提交 issue 或者 pr 此项目
+    请多多包含 (^ _ ^!)
+    `)
   }
 
   /**
@@ -142,10 +127,24 @@ class TokensNode {
    * @param {*} current 索引 默认为 this.current 
    * @returns 
    */
-  peek(current = this.current + 1) {
+  peek(toType, index) {
+    const current = index || this.current
     if (this.exit(current)) return false
 
-    return this.tokens[current]
+    const { blank, type } = this.tokens[current]
+
+    // 跳过空白或者不需要的字符
+    if (blank) {
+      return this.peek(++current)
+    }
+
+    if (toType === type) {
+      this.next()
+
+      return true
+    }
+
+    return false
   }
 
   /**
@@ -159,12 +158,15 @@ class TokensNode {
     return false
   }
 
+  /**
+   * 跳过空白 或 无关 token 
+   * @returns 
+   */
   skip() {
     const { blank } = this.getTokenType()
 
-    // \n \t 这类的跳过
     if (blank) {
-      rangeMap.add(this.getTokenValue().length)
+
       this.next()
       return true
     }

@@ -119,7 +119,10 @@ class ParserKeywords extends TokensNode {
         // 这里要实现当前 token 是否在函数体内 不然就会抛错
 
         this.next()
-        if (this.test(SemiSymbol)) {
+        // todo 
+        // 这里并没有合适的判断
+        // 如果 return 后不是合适的语义 就要考虑返回 
+        if (this.test(SemiSymbol) || this.getTokenValue() === '}') {
           node.argument = null
         } else {
           node.argument = this.parseExpression()
@@ -265,7 +268,6 @@ class ParserKeywords extends TokensNode {
 
       // 这里去进行语法分析
       // todo 
-
       childNode.init =
         this.test(EqualSignSymbol) ?
           this.parseExpression() :
@@ -274,7 +276,7 @@ class ParserKeywords extends TokensNode {
       node.declarations.push(childNode.finish("VariableDeclaration"))
 
       // 逗号
-      if (!this.test(Comma)) break
+      if (!this.peek(Comma)) break
     }
 
     return node.finish("VariableDeclaration")

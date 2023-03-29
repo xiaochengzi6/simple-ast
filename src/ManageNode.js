@@ -5,13 +5,10 @@ import rangeMap from "./Statement/rangeMap.js"
  */
 class ManageNode {
   static isKey
-  constructor(isKey) {
-    ManageNode.isKey = isKey
-
-    if (!isKey) {
-      this.key = Math.random().toString(32).slice(2)
-      rangeMap.keys.push(this.key)
-    }
+  constructor() {
+    this.start = rangeMap.start
+    this.blockStart = rangeMap.blockStart
+    this.end = null
   }
 
   /**
@@ -22,19 +19,16 @@ class ManageNode {
   finish(type) {
     this.type = type
 
-    if (ManageNode.isKey) return
-
-    const obj = rangeMap.calc(this.key)
-
-    if (obj && typeof obj === 'object') {
-      const { start, end } = obj
-      this.start = start
-      this.end = end
+    // ----set end-----
+    if (type === 'BlockStatement') {
+      this.start = this.blockStart 
+      this.end = rangeMap.blockEnd
+    } else {
+      this.end = rangeMap.end
     }
 
-    // 要根据规则进行判断
-    this.calcRange()
-
+    delete this.blockStart
+    // ---------------
     return this
   }
 
@@ -117,11 +111,11 @@ class ManageNode {
       if ((this.start == null) || (this.start > start)) {
         this.start = start || 0
       }
-      
+
       if ((this.end == null) || (this.end < end)) {
         const value = rangeMap.spaceIndex
         let line = 0
-        if(this.type !== rangeMap.type){
+        if (this.type !== rangeMap.type) {
           // line = rangeMap.lineIndex || 0
 
           // 取出后重置为 0
@@ -135,10 +129,10 @@ class ManageNode {
         // 主要是确保最终长度一致
         if (value > 0) {
           rangeMap.spaceIndex = 0
-          
-          return this.end = end + value + line 
+
+          return this.end = end + value + line
         }
-        this.end = end + line 
+        this.end = end + line
       }
     }
 
