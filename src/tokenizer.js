@@ -114,8 +114,14 @@ function tokenizer(input) {
     // 处理空格
     if (char === 32) {
       // 默认不处理
+      const { type, value } = getPunctuation(char)
+
       current++
-      return
+      return tokens.push({
+        type,
+        value,
+        blank: true
+      })
     }
 
     // 一元操作符：处理 ++ -- 
@@ -229,7 +235,7 @@ function tokenizer(input) {
       const { type } = getPunctuation(char)
       // =
       if (index === 0) {
-        current++
+        // current++
         return tokens.push({
           type,
           value: "=",
@@ -238,7 +244,7 @@ function tokenizer(input) {
       }
       // ==
       else if (index === 1) {
-        current++
+        // current++
         return tokens.push({
           type: "EqualStatement",
           value: "==",
@@ -248,7 +254,7 @@ function tokenizer(input) {
       }
       // ===
       else if (index === 2) {
-        current++
+        // current++
         return tokens.push({
           type: "CongruentStatement",
           value: "===",

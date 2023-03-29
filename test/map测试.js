@@ -1,23 +1,23 @@
-const map = new Map()
-map.set(0, {
-  start: 0,
-  end: 1
-})
+function query(arr, isMax) {
+  let i = 0
+  for (let j = 0; j < arr.length; j++) {
+    if (isMax) {
+      if (arr[j] > arr[i]) {
+        i = j
+      }
+    } else {
+      if (arr[j] < arr[i]) {
+        i = j
+    }
+    }
+  }
 
-map.set(1, {
-  start: 2, 
-  end: 3
-})
+  return arr[i]
+}
 
-map.set(2, {
-  start: 3,
-  end: 5
-})
+const result = query([1, 2, 3, 4, 5, 6, 7, 8, 9], true )
 
-console.log(map)
-const value = new Set(map.values())
+console.log(result)
+let i = 0
 
-console.log(value)
 
-const arr = Array.from(map.values())
-console.log(arr)

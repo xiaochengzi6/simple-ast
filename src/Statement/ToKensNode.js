@@ -46,18 +46,22 @@ class TokensNode {
   }
 
   next() {
-    rangeMap.add(this.getTokenValue().length)
+    rangeMap.add(this.getTokenValue(), this.getTokenType())
 
     const current = ++this.current
 
     // 限制长度
     if (current >= this.length) {
+      // rangeMap.add(this.getTokenValue().length)
       return false
     }
 
     // 跳过 
-    const isSkip = this.skip(this.current)
-    if (isSkip) return
+    const {blank} = this.getToken()
+  
+    if(blank) {
+      return this.next()
+    } 
 
     return true
   }
@@ -155,11 +159,12 @@ class TokensNode {
     return false
   }
 
-  skip(index) {
-    const { blank } = this.tokens[index]
+  skip() {
+    const { blank } = this.getTokenType()
 
     // \n \t 这类的跳过
     if (blank) {
+      rangeMap.add(this.getTokenValue().length)
       this.next()
       return true
     }

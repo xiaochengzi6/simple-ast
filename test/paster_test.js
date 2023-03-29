@@ -3,7 +3,9 @@ import tokenizer from "../src/tokenizer.js"
 import stringifyObject from 'stringify-object'
 import rangeMap from "../src/Statement/rangeMap.js"
 
-const target = `function a(a, b){return a > b}`
+const target = `if(a === b){
+  var c = 89
+}`
 
 const tokens = tokenizer(target)
 console.log(tokens)
