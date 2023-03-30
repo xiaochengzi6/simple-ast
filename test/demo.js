@@ -1,103 +1,42 @@
 
-class d {
-  constructor(tokens, current) {
-    this.tokens = tokens
-    this.current = current
-    this.add()
-  }
+// tokens
+[
+  { type: "", value: "2" },
+  { type: "", value: '+', grad: 7 },
+  { type: "", value: "3" },
+  { type: "", value: "*", grad: 8 },
+  { type: "", value: "5" }
+]
 
-  add() {
-    this.current += 1
-    this.sub()
-  }
+
+// 逻辑运算
+function parseExLogic(node) {
+
+  return logic(node, -1)
 }
 
-class c extends d {
-  constructor(tokens, current) {
-    super(tokens, current)
-    this.sub()
+function logic(node, level) {
+  // 取出当前 token 设置好的优先级
+  const { grad } = token
+
+  if (grad && grad > level) {
+    const init = {}
+    init.left = node
+
+    init.operator = node.value
+
+    // 获取下一个 token
+    next()
+
+    // 递归处理下一个 node
+    node.right = this.logic(nextNode, grad)
+
+    // 判断是否还存在 优先级
+    // 传入 init 并判断 下一个 token 是否还存在优先级
+    return this.logic(init, level)
   }
 
-  sub() {
-    this.current -= 1
-  }
-}
-
-class b extends c {
-  constructor(tokens, current) {
-    super(tokens, current)
-    this.bu()
-  }
-
-  bu() {
-    this.current += 2
-  }
-}
-
-class a extends b {
-  constructor(tokens, current) {
-    super(tokens, current)
-    const num = this.getCurrent()
-    console.log('num', num)
-  }
-
-  getCurrent() {
-    return this.current
-  }
-
-}
-
-
-const arr = [1, 2, 3, 4, 5]
-const obj = new a(arr, 0)
-
-// 输出了什么
-// console.log(obj)
-
-class App {
-  constructor() {
-    this.current = 0
-    this.getRange.bind(this)
-  }
-
-  getRange() {
-    return this.current
-  }
-
-  parserVar(){
-    const node = new MangeNode(this.bind())
-    this.add()
-    return node.finish()
-  }
-
-  add() {
-    this.current += 1 
-  }
-
-  bind(){
-    return this.getRange.bind(this)
-  }
-}
-
-class MangeNode {
-  constructor(rangeFunc) {
-    this.rangeFunc = rangeFunc
-  }
-
-  finish() {
-    console.log(this.rangeFunc())
-  }
-}
-
-Test()
-function Test(){
-  const app = new App()
-  app.add()
-  const node = new MangeNode(app.getRange.bind(app))
-
-  app.add()
-  node.finish()
-
-  // test 2
-  app.parserVar()
+  // 结束
+  // 这里返回的 node 就是保持一个深度优先的嵌套关系
+  return node
 }

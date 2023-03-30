@@ -10,7 +10,7 @@ class Ex extends ExComma{
     const node = this.parseComma()
     const index = this.current
     const preIndex = this.preCurrent()
-    
+    const tokenVal = this.getTokenValue()
     console.log(index, preIndex, this.getTokenValue())
 
     /**
@@ -23,6 +23,11 @@ class Ex extends ExComma{
      * 4.   我认为应该在 exKeyWords 中 
      * 5.   或者实在 parserKeywords 中重新设置
      */
+    if(tokenVal !== ')' || (tokenVal !== '}')){
+      const value = index - tokenVal
+      console.log(node)
+    }
+
     return node 
   }
 }

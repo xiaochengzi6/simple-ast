@@ -1,6 +1,6 @@
 import tokenizer from "../src/tokenizer.js"
 
-const target = `function a (a, b){return a < b}`
+const target = `var name = 2`
 
 const tokens = tokenizer(target)
 
